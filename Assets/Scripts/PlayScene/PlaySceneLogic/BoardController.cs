@@ -9,65 +9,59 @@ namespace PlayScene.PlaySceneLogic
     {
         private readonly PieceItemController.Factory pieceElementFactory;
 
-        public PieceItemController[,] ArrayPieceItemControllers { get; set; }
+        public  PieceItemController[,] ArrayPieceItemControllers { get; set; }
+        private PieceInfo[,]           pieceInfos = new PieceInfo[GameStaticValue.Rows, GameStaticValue.Columns];
 
         public BoardController(PieceItemController.Factory pieceElementFactory) { this.pieceElementFactory = pieceElementFactory; }
 
-        public async UniTask InitPiece(int rows, int columns, PieceInfo[,] pieceInfos, Transform parent)
+        public async UniTask InitPiece(Transform parent)
         {
+            var rows    = GameStaticValue.Rows;
+            var columns = GameStaticValue.Columns;
             this.ArrayPieceItemControllers = new PieceItemController[rows, columns];
-
-            // Generate piece type
-            for (var i = 0; i < 16; i++)
-            {
-                var xIndex        = i < 8 ? i : i - 8;
-                var yIndex        = i < 8 ? 1 : 6;
-                var pieceType     = PieceType.None;
-                var pieceTeam     = i < 8 ? PieceTeam.White : PieceTeam.Black;
-                pieceType = Mathf.Abs(xIndex - 3.5f) switch
-                {
-                    3.5f => PieceType.Castle,
-                    2.5f => PieceType.Knight,
-                    1.5f => PieceType.Bishop,
-                    0.5f => xIndex == 3 ? PieceType.Queen : PieceType.King,
-                    _ => pieceType
-                };
-                var pieceItemController = await this.pieceElementFactory.Create(new PieceItemModel()
-                {
-                    PieceInfo = new PieceInfo
-                    {
-                        Row = pieceInfos[xIndex, yIndex].Row,
-                        Col = pieceInfos[xIndex, yIndex].Col,
-                        PieceTeam = pieceTeam,
-                        PieceType = pieceType
-                    }
-                });
-                this.ArrayPieceItemControllers[xIndex, yIndex] = pieceItemController;
-            }
 
             // Generate blank piece
             for (var i = 0; i < rows; i++)
             {
                 for (var j = 0; j < columns; j++)
                 {
+                    var pieceTeam = PieceTeam.None;
                     var pieceType = PieceType.None;
                     if (i == 1 || i == rows - 2)
                     {
+                        pieceTeam = i == 1 ? PieceTeam.White : PieceTeam.Black;
                         pieceType = PieceType.Pawn;
                     }
+
+                    if (i == 0 || i == rows - 1)
+                    {
+                        pieceTeam = i == 0 ? PieceTeam.White : PieceTeam.Black;
+                        pieceType = Mathf.Abs(j - 3.5f) switch
+                        {
+                            3.5f => PieceType.Castle,
+                            2.5f => PieceType.Knight,
+                            1.5f => PieceType.Bishop,
+                            0.5f => j == 3 ? PieceType.Queen : PieceType.King,
+                            _ => pieceType
+                        };
+                    }
+
                     var pieceItemController = await this.pieceElementFactory.Create(new PieceItemModel
                     {
                         PieceInfo = new PieceInfo
                         {
-                            Row       = pieceInfos[i, j].Row,
-                            Col       = pieceInfos[i, j].Col,
-                            PieceType = pieceType
+                            Row       = i,
+                            Col       = j,
+                            PieceType = pieceType,
+                            PieceTeam = pieceTeam
                         },
                         Parent = parent
                     });
                     this.ArrayPieceItemControllers[i, j] = pieceItemController;
                 }
             }
+
+            Debug.Log("Hello");
         }
     }
 }

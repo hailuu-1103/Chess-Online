@@ -5,7 +5,9 @@ namespace GameData
 
     public class UserData
     {
-        public IGamePlayMode CurrentModeOnPlay { get; set; }
+        public IGamePlayMode   CurrentModeOnPlay { get; set; }
+        public ComputerMode    ComputerMode      { get; set; } = new();
+        public MultiplayerMode MultiplayerMode   { get; set; } = new();
     }
 
     public class ComputerMode : IComputerMode
