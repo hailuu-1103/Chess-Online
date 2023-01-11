@@ -17,8 +17,8 @@ namespace Installer
 
             this.Container.Bind<PlaySceneCamera>().FromInstance(this.playSceneCamera).AsCached();
             
-            this.Container.Bind<PieceSpawner>().AsCached().NonLazy();
-            this.Container.Bind<PieceHighlighter>().AsCached().NonLazy();
+            this.Container.Bind<TileSpawner>().AsCached().NonLazy();
+            this.Container.Bind<TileHighlighter>().AsCached().NonLazy();
             this.Container.Bind<BoardController>().FromComponentInHierarchy().AsCached();
             this.Container.DeclareSignal<OnMouseSignal>();
         }

@@ -4,8 +4,8 @@ namespace Runtime.Input.Signal
 
     public class OnMouseSignal
     {
-        public GameObject CurrentPieceHover { get; }
+        public GameObject CurrentTileHover { get; }
 
-        public OnMouseSignal(GameObject currentPieceHover) { this.CurrentPieceHover = currentPieceHover; }
+        public OnMouseSignal(GameObject currentTileHover) { this.CurrentTileHover = currentTileHover; }
     }
 }

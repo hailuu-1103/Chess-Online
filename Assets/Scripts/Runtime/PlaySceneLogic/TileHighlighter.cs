@@ -8,7 +8,7 @@ namespace Runtime.PlaySceneLogic
     using UnityEngine;
     using Zenject;
 
-    public class PieceHighlighter : IDisposable
+    public class TileHighlighter : IDisposable
     {
         #region inject
 
@@ -21,19 +21,18 @@ namespace Runtime.PlaySceneLogic
 
         private Vector2Int currentHover = -Vector2Int.one;
 
-        public PieceHighlighter(ILogService logService, IGameAssets gameAssets, SignalBus signalBus, BoardController boardController)
+        public TileHighlighter(ILogService logService, IGameAssets gameAssets, SignalBus signalBus, BoardController boardController)
         {
             this.logService      = logService;
             this.gameAssets      = gameAssets;
             this.signalBus       = signalBus;
             this.boardController = boardController;
-            this.signalBus.Subscribe<OnMouseSignal>(this.HighlightPiece);
+            this.signalBus.Subscribe<OnMouseSignal>(this.HighlightTile);
         }
 
-        private async void HighlightPiece(OnMouseSignal signal)
+        private async void HighlightTile(OnMouseSignal signal)
         {
-            var pieceHoverIndex = this.GetPieceHoverIndex(signal.CurrentPieceHover);
-            this.logService.LogWithColor("Current piece hover: " + pieceHoverIndex);
+            var pieceHoverIndex = this.GetTileHoverIndex(signal.CurrentTileHover);
 
             var transparentMat    = await this.gameAssets.LoadAssetAsync<Material>("TransparentMat");
             var highlightPieceMat = await this.gameAssets.LoadAssetAsync<Material>("PieceHighlightMat");
@@ -41,30 +40,30 @@ namespace Runtime.PlaySceneLogic
             if (this.currentHover == -Vector2Int.one)
             {
                 this.currentHover                                                                                              = pieceHoverIndex;
-                this.boardController.runtimePieces[pieceHoverIndex.x, pieceHoverIndex.y].GetComponent<MeshRenderer>().material = highlightPieceMat;
+                this.boardController.runtimeTiles[pieceHoverIndex.x, pieceHoverIndex.y].GetComponent<MeshRenderer>().material = highlightPieceMat;
             }
 
             // Hover another piece
             if (this.currentHover != pieceHoverIndex)
             {
-                this.boardController.runtimePieces[this.currentHover.x, this.currentHover.y].GetComponent<MeshRenderer>().material = transparentMat;
+                this.boardController.runtimeTiles[this.currentHover.x, this.currentHover.y].GetComponent<MeshRenderer>().material = transparentMat;
                 this.currentHover                                                                                                  = pieceHoverIndex;
-                this.boardController.runtimePieces[pieceHoverIndex.x, pieceHoverIndex.y].GetComponent<MeshRenderer>().material     = highlightPieceMat;
+                this.boardController.runtimeTiles[pieceHoverIndex.x, pieceHoverIndex.y].GetComponent<MeshRenderer>().material     = highlightPieceMat;
             }
             else
             {
                 if (this.currentHover == -Vector2Int.one) return;
-                this.boardController.runtimePieces[this.currentHover.x, this.currentHover.y].GetComponent<MeshRenderer>().material = highlightPieceMat;
+                this.boardController.runtimeTiles[this.currentHover.x, this.currentHover.y].GetComponent<MeshRenderer>().material = highlightPieceMat;
             }
         }
 
-        private Vector2Int GetPieceHoverIndex(GameObject pieceObj)
+        private Vector2Int GetTileHoverIndex(GameObject pieceObj)
         {
             for (var i = 0; i < GameStaticValue.BoardRows; i++)
             {
                 for (var j = 0; j < GameStaticValue.BoardColumn; j++)
                 {
-                    if (this.boardController.runtimePieces[i, j].Equals(pieceObj))
+                    if (this.boardController.runtimeTiles[i, j].Equals(pieceObj))
                     {
                         return new Vector2Int(i, j);
                     }
@@ -74,6 +73,6 @@ namespace Runtime.PlaySceneLogic
             return -Vector2Int.one;
         }
 
-        public void Dispose() { this.signalBus.Unsubscribe<OnMouseSignal>(this.HighlightPiece); }
+        public void Dispose() { this.signalBus.Unsubscribe<OnMouseSignal>(this.HighlightTile); }
     }
 }

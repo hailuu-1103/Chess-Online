@@ -26,8 +26,8 @@ namespace Runtime.Input
         {
             if (Input.GetMouseButtonDown(0))
             {
-                var        ray = Camera.main!.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out var hitInfo, 100, LayerMask.GetMask("Piece", "Hover")))
+                var        ray = this.playSceneCamera.GetRayScreenPoint(Input.mousePosition);
+                if (Physics.Raycast(ray, out var hitInfo, 100, LayerMask.GetMask("Tile")))
                 {
                     this.signalBus.Fire(new OnMouseSignal(hitInfo.transform.gameObject));
                 }

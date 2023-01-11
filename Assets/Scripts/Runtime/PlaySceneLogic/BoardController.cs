@@ -7,20 +7,20 @@ namespace Runtime.PlaySceneLogic
     {
         #region inject
 
-        private PieceSpawner pieceSpawner;
+        private TileSpawner tileSpawner;
 
         #endregion
 
-        [SerializeField] private Transform pieceHolder;
+        [SerializeField] private Transform tileHolder;
 
-        public GameObject[,] runtimePieces = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
+        public GameObject[,] runtimeTiles = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
 
         [Inject]
-        private void OnInit(PieceSpawner spawner) { this.pieceSpawner = spawner; }
+        private void OnInit(TileSpawner spawner) { this.tileSpawner = spawner; }
 
         private async void Start()
         {
-            this.runtimePieces = await this.pieceSpawner.GenerateAllPiece(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder);
+            this.runtimeTiles = await this.tileSpawner.GenerateAllTiles(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.tileHolder);
         }
     }
 }
