@@ -4,10 +4,10 @@ namespace Runtime.PlaySceneLogic.ChessPiece
 
     public class BaseChessPiece : MonoBehaviour
     {
-        public ChessPieceTeam Team;
+        public PieceTeam Team;
         public int            Row;
         public int            Col;
-        public ChessPieceType Type;
+        public PieceType Type;
         
         
     }

@@ -4,6 +4,9 @@ namespace Installer
     using Runtime.Input;
     using Runtime.Input.Signal;
     using Runtime.PlaySceneLogic;
+    using Runtime.PlaySceneLogic.ChessPiece;
+    using Runtime.PlaySceneLogic.ChessPiece.Piece;
+    using Runtime.PlaySceneLogic.ChessTile;
     using UnityEngine;
     using Zenject;
 
@@ -19,6 +22,7 @@ namespace Installer
             
             this.Container.Bind<TileSpawner>().AsCached().NonLazy();
             this.Container.Bind<TileHighlighter>().AsCached().NonLazy();
+            this.Container.Bind<PieceSpawner>().AsCached().NonLazy();
             this.Container.Bind<BoardController>().FromComponentInHierarchy().AsCached();
             this.Container.DeclareSignal<OnMouseSignal>();
         }

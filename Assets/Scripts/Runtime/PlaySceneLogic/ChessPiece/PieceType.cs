@@ -1,6 +1,6 @@
 namespace Runtime.PlaySceneLogic.ChessPiece
 {
-    public enum ChessPieceType
+    public enum PieceType
     {
         None = 0,
         Pawn = 1,

@@ -25,6 +25,30 @@ MonoBehaviour:
     m_Address: Tile
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 2ab5038e27793d24c85725d523951d95
+    m_Address: Bishop
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 62e7a316389ee094bb537e99282d8fa4
+    m_Address: Castle
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9d548a9a780cf934c9f8d1d82e9b3ef7
+    m_Address: King
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d1c8c208576e4d54a870aefca6ba9399
+    m_Address: Knight
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b3a6e7dedc37e074f8060439e253f021
+    m_Address: Pawn
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: cca666a8a5b5a864197d869ba43c59de
+    m_Address: Queen
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 679620bf13a8f164ea2400b1335db13b, type: 2}
   m_SchemaSet:

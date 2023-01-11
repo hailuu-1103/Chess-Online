@@ -1,4 +1,4 @@
-namespace Runtime.PlaySceneLogic
+namespace Runtime.PlaySceneLogic.ChessTile
 {
     using System;
     using Cysharp.Threading.Tasks;

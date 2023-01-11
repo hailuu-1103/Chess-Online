@@ -16,31 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: e77e9b50875918143a4483e597ed2b22
-  m_SerializeEntries:
-  - m_GUID: 3975570b5625c8849a48233ead51464c
-    m_Address: Bishop
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 83ee0b36e5fde9845afcc548066feb57
-    m_Address: King
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: fbff9fc595fb4474f98a9c9e55fac934
-    m_Address: Knight
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: e007e646af287c447adbdc9040b9778e
-    m_Address: Pawn
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: e5f12415891e81648841b6e2418e014d
-    m_Address: Queen
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 23e62504015fc8b4492209901c201c28
-    m_Address: Castle
-    m_ReadOnly: 0
-    m_SerializedLabels: []
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 679620bf13a8f164ea2400b1335db13b, type: 2}
   m_SchemaSet:

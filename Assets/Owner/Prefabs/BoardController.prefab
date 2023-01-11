@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &725682470
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 725682471}
+  m_Layer: 0
+  m_Name: PieceHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &725682471
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 725682470}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2671358120995579937}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2671358120930271236
 GameObject:
   m_ObjectHideFlags: 0
@@ -10,7 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2671358120930271237}
   m_Layer: 0
-  m_Name: PieceHolder
+  m_Name: TileHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62,6 +93,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2671358120930271237}
+  - {fileID: 725682471}
   - {fileID: 6946845032065313828}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -78,7 +110,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e160efdda0c2433ea63cde69945c7cf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pieceHolder: {fileID: 2671358120930271237}
+  tileHolder: {fileID: 2671358120930271237}
+  pieceHolder: {fileID: 725682471}
 --- !u!114 &2671358120995579951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -101,7 +134,7 @@ PrefabInstance:
     - target: {fileID: 1875546280713248703, guid: 1d1c70d69f889344484df3e40d205646,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1875546280713248703, guid: 1d1c70d69f889344484df3e40d205646,
         type: 3}
