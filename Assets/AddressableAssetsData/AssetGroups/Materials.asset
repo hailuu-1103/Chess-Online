@@ -65,6 +65,18 @@ MonoBehaviour:
     m_Address: White Knight
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: a2f93dc531274dc4fa35523b0df51c41
+    m_Address: PieceMat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 65fd24699dfde8a40969f6261b1ec80f
+    m_Address: PieceHighlightMat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6d8a8b63190642a4681a9cae2a27fb12
+    m_Address: TransparentMat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 679620bf13a8f164ea2400b1335db13b, type: 2}
   m_SchemaSet:

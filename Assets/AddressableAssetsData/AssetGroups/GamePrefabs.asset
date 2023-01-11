@@ -21,6 +21,10 @@ MonoBehaviour:
     m_Address: PieceItemView
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 63b36b8a0d9524f4294cf7d35fea5556
+    m_Address: Piece
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 679620bf13a8f164ea2400b1335db13b, type: 2}
   m_SchemaSet:
