@@ -29,7 +29,7 @@ namespace Runtime.Input
                 var        ray = this.playSceneCamera.GetRayScreenPoint(Input.mousePosition);
                 if (Physics.Raycast(ray, out var hitInfo, 100, LayerMask.GetMask("Tile")))
                 {
-                    this.signalBus.Fire(new OnMouseSignal(hitInfo.transform.gameObject));
+                    this.signalBus.Fire(new OnMouseEnterSignal(hitInfo.transform.gameObject));
                 }
             }
         }

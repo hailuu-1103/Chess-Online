@@ -5,6 +5,7 @@ namespace GameData
     public interface IGamePlayMode
     {
         Type          CurrentGamePlayMode { get; }
+        
     }
 
     public interface IComputerMode : IGamePlayMode
