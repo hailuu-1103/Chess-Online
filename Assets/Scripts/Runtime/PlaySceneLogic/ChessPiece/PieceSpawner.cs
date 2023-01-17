@@ -45,19 +45,19 @@ namespace Runtime.PlaySceneLogic.ChessPiece
                         };
                     }
 
-                    pieces[i, j] = await this.SpawnSinglePiece(parent, pieceType, pieceTeam, j, i);
+                    pieces[i, j] = await this.SpawnSinglePiece(parent, pieceType, pieceTeam, i, j);
                 }
             }
 
             return pieces;
         }
 
-        public async UniTask<BaseChessPiece> SpawnSinglePiece(Transform parent, PieceType type, PieceTeam team, int x, int y)
+        private async UniTask<BaseChessPiece> SpawnSinglePiece(Transform parent, PieceType type, PieceTeam team, int x, int y)
         {
             if (type == PieceType.None) return null;
             var piece = await this.objectPoolManager.Spawn(Enum.GetName(typeof(PieceType), type), parent);
             piece.GetComponent<MeshRenderer>().material = team != PieceTeam.None
-                ? await this.gameAssets.LoadAssetAsync<Material>(Enum.GetName(typeof(PieceTeam), team) + " " + Enum.GetName(typeof(PieceType), team))
+                ? await this.gameAssets.LoadAssetAsync<Material>(Enum.GetName(typeof(PieceTeam), team) + " " + Enum.GetName(typeof(PieceType), type))
                 : null;
             piece.transform.position = new Vector3(x, GameStaticValue.TileOffsetY, y);
             var baseChessPiece = piece.GetComponent<BaseChessPiece>();

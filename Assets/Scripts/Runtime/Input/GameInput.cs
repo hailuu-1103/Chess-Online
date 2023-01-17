@@ -11,15 +11,17 @@ namespace Runtime.Input
         #region inject
 
         private PlaySceneCamera playSceneCamera;
-        private SignalBus       signalBus;        
+        private SignalBus       signalBus;
+        private BoardController boardController;
 
         #endregion
 
         [Inject]
-        private void OnInit(SignalBus signal, PlaySceneCamera playCamera)
+        private void OnInit(SignalBus signal, PlaySceneCamera playCamera, BoardController controller)
         {
             this.signalBus       = signal;
             this.playSceneCamera = playCamera;
+            this.boardController = controller;
         }
 
         private void Update()
@@ -29,7 +31,7 @@ namespace Runtime.Input
                 var        ray = this.playSceneCamera.GetRayScreenPoint(Input.mousePosition);
                 if (Physics.Raycast(ray, out var hitInfo, 100, LayerMask.GetMask("Tile")))
                 {
-                    this.signalBus.Fire(new OnMouseEnterSignal(hitInfo.transform.gameObject));
+                    this.signalBus.Fire(new OnMouseEnterSignal(this.boardController.GetTileIndex(hitInfo.transform.gameObject)));
                 }
             }
         }

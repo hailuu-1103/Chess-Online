@@ -32,7 +32,7 @@ namespace Runtime.PlaySceneLogic.ChessTile
 
         private async void HighlightTile(OnMouseEnterSignal enterSignal)
         {
-            var pieceHoverIndex = this.GetTileHoverIndex(enterSignal.CurrentTileHover);
+            var pieceHoverIndex = enterSignal.CurrentTileIndex;
 
             var transparentMat    = await this.gameAssets.LoadAssetAsync<Material>("TransparentMat");
             var highlightPieceMat = await this.gameAssets.LoadAssetAsync<Material>("PieceHighlightMat");
@@ -55,22 +55,6 @@ namespace Runtime.PlaySceneLogic.ChessTile
                 if (this.currentHover == -Vector2Int.one) return;
                 this.boardController.runtimeTiles[this.currentHover.x, this.currentHover.y].GetComponent<MeshRenderer>().material = highlightPieceMat;
             }
-        }
-
-        public Vector2Int GetTileHoverIndex(GameObject pieceObj)
-        {
-            for (var i = 0; i < GameStaticValue.BoardRows; i++)
-            {
-                for (var j = 0; j < GameStaticValue.BoardColumn; j++)
-                {
-                    if (this.boardController.runtimeTiles[i, j].Equals(pieceObj))
-                    {
-                        return new Vector2Int(i, j);
-                    }
-                }
-            }
-
-            return -Vector2Int.one;
         }
 
         public void Dispose() { this.signalBus.Unsubscribe<OnMouseEnterSignal>(this.HighlightTile); }

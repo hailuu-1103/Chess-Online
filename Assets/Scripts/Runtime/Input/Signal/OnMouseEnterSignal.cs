@@ -4,8 +4,8 @@ namespace Runtime.Input.Signal
 
     public class OnMouseEnterSignal
     {
-        public GameObject CurrentTileHover { get; }
+        public Vector2Int CurrentTileIndex { get; }
 
-        public OnMouseEnterSignal(GameObject currentTileHover) { this.CurrentTileHover = currentTileHover; }
+        public OnMouseEnterSignal(Vector2Int currentTileIndex) { this.CurrentTileIndex = currentTileIndex; }
     }
 }
