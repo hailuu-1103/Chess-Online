@@ -39,7 +39,7 @@ namespace Runtime.PlaySceneLogic.ChessTile
             //First time hover
             if (this.currentHover == -Vector2Int.one)
             {
-                this.currentHover                                                                                              = pieceHoverIndex;
+                this.currentHover                                                                                             = pieceHoverIndex;
                 this.boardController.runtimeTiles[pieceHoverIndex.x, pieceHoverIndex.y].GetComponent<MeshRenderer>().material = highlightPieceMat;
             }
 
@@ -47,13 +47,29 @@ namespace Runtime.PlaySceneLogic.ChessTile
             if (this.currentHover != pieceHoverIndex)
             {
                 this.boardController.runtimeTiles[this.currentHover.x, this.currentHover.y].GetComponent<MeshRenderer>().material = transparentMat;
-                this.currentHover                                                                                                  = pieceHoverIndex;
+                this.currentHover                                                                                                 = pieceHoverIndex;
                 this.boardController.runtimeTiles[pieceHoverIndex.x, pieceHoverIndex.y].GetComponent<MeshRenderer>().material     = highlightPieceMat;
             }
             else
             {
                 if (this.currentHover == -Vector2Int.one) return;
                 this.boardController.runtimeTiles[this.currentHover.x, this.currentHover.y].GetComponent<MeshRenderer>().material = highlightPieceMat;
+            }
+        }
+
+        public async void HighlightTiles(GameObject[] tiles)
+        {
+            foreach (var tile in tiles)
+            {
+                tile.GetComponent<MeshRenderer>().material = await this.gameAssets.LoadAssetAsync<Material>("PieceHighlightMat");
+            }
+        }
+
+        public async void RemoveHighlightTiles(GameObject[] tiles)
+        {
+            foreach (var tile in tiles)
+            {
+                tile.GetComponent<MeshRenderer>().material = await this.gameAssets.LoadAssetAsync<Material>("TransparentMat");
             }
         }
 

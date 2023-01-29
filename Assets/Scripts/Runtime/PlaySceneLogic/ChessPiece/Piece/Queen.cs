@@ -1,13 +1,18 @@
 namespace Runtime.PlaySceneLogic.ChessPiece.Piece
 {
+    using System.Collections.Generic;
     using UnityEngine;
 
     public class Queen : BaseChessPiece
     {
-        public override void MoveTo()
+        public override List<Vector2Int> GetAvailableMoves()
         {
-            Debug.Log("Queen move.");
+            return null;
+        }
 
+        public override void MoveTo(BaseChessPiece targetPiece)
+        {
+            
         }
     }
 }

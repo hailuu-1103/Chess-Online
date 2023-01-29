@@ -1,5 +1,8 @@
 namespace Runtime.PlaySceneLogic
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Cysharp.Threading.Tasks;
     using DG.Tweening;
     using GameFoundation.Scripts.Utilities.LogService;
     using Runtime.Input.Signal;
@@ -12,10 +15,11 @@ namespace Runtime.PlaySceneLogic
     {
         #region inject
 
-        private ILogService  logService;
-        private TileSpawner  tileSpawner;
-        private PieceSpawner pieceSpawner;
-        private SignalBus    signalBus;
+        private ILogService     logService;
+        private TileSpawner     tileSpawner;
+        private TileHighlighter tileHighlighter;
+        private PieceSpawner    pieceSpawner;
+        private SignalBus       signalBus;
 
         #endregion
 
@@ -25,18 +29,20 @@ namespace Runtime.PlaySceneLogic
         public GameObject[,]     runtimeTiles  = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
         public BaseChessPiece[,] runtimePieces = new BaseChessPiece[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
 
-        private Vector2Int currentlyTileIndex = -Vector2Int.one;
-        private Vector2Int previousTileIndex  = -Vector2Int.one;
-        private int        inTurnMoveCount;
-        private bool       isWhiteTurn = true;
+        private List<Vector2Int> availableMoves     = new();
+        private Vector2Int       currentlyTileIndex = -Vector2Int.one;
+        private Vector2Int       previousTileIndex  = -Vector2Int.one;
+        private int              inTurnMoveCount;
+        private bool             isWhiteTurn = true;
 
         [Inject]
-        private void OnInit(ILogService logService, TileSpawner tileSpawner, PieceSpawner pieceSpawner, SignalBus signalBus)
+        private void OnInit(ILogService logService, TileSpawner tileSpawner, PieceSpawner pieceSpawner, TileHighlighter tileHighlighter, SignalBus signalBus)
         {
-            this.logService   = logService;
-            this.tileSpawner  = tileSpawner;
-            this.pieceSpawner = pieceSpawner;
-            this.signalBus    = signalBus;
+            this.logService      = logService;
+            this.tileSpawner     = tileSpawner;
+            this.tileHighlighter = tileHighlighter;
+            this.pieceSpawner    = pieceSpawner;
+            this.signalBus       = signalBus;
         }
 
         private void OnEnable() { this.signalBus.Subscribe<OnMouseEnterSignal>(this.MovePiece); }
@@ -52,6 +58,15 @@ namespace Runtime.PlaySceneLogic
         private void MovePiece(OnMouseEnterSignal signal)
         {
             this.logService.LogWithColor($"White turn? {this.isWhiteTurn}", Color.magenta);
+
+            // Show available move
+            if (this.GetPieceByIndex(signal.CurrentTileIndex) != null)
+            {
+                var currentPiece = this.GetPieceByIndex(signal.CurrentTileIndex);
+                this.availableMoves = currentPiece.GetAvailableMoves();
+                this.tileHighlighter.HighlightTiles(this.availableMoves.Select(this.GetTileByIndex).ToArray());
+            }
+            
             this.previousTileIndex =  this.currentlyTileIndex;
             this.inTurnMoveCount   += 1;
             if (this.inTurnMoveCount == 1)
@@ -59,49 +74,47 @@ namespace Runtime.PlaySceneLogic
                 this.currentlyTileIndex = signal.CurrentTileIndex;
                 return;
             }
-
+            
             this.currentlyTileIndex = signal.CurrentTileIndex;
-
+            this.tileHighlighter.RemoveHighlightTiles(this.availableMoves.Select(this.GetTileByIndex).ToArray());
             if (this.IsValidMove(this.previousTileIndex, this.currentlyTileIndex))
             {
                 var targetPos = this.runtimeTiles[this.currentlyTileIndex.x, this.currentlyTileIndex.y].transform.position;
+                
+                // Move animation
                 this.runtimePieces[this.previousTileIndex.x, this.previousTileIndex.y].transform
                     .DOMove(targetPos, 1f);
+                
                 this.runtimePieces[this.currentlyTileIndex.x, this.currentlyTileIndex.y] = this.GetPieceByIndex(this.previousTileIndex);
                 this.runtimePieces[this.previousTileIndex.x, this.previousTileIndex.y]   = null;
             }
 
             if (this.inTurnMoveCount != 2) return;
             this.inTurnMoveCount    = 0;
+            this.availableMoves.Clear();
             this.previousTileIndex  = -Vector2Int.one;
             this.currentlyTileIndex = -Vector2Int.one;
         }
 
         private bool IsValidMove(Vector2Int currentIndex, Vector2Int targetIndex)
         {
-            var currentPiece = this.GetPieceByIndex(currentIndex);
-            var targetPiece  = this.GetPieceByIndex(targetIndex);
+            var currentPiece   = this.GetPieceByIndex(currentIndex);
+            var targetPiece    = this.GetPieceByIndex(targetIndex);
+
+            if (currentPiece == null || !this.availableMoves.Contains(targetIndex)) return false;
             if (this.isWhiteTurn)
             {
-                if (currentPiece == null || currentPiece.Team == PieceTeam.Black) return false;
-                currentPiece.MoveTo();
+                if (currentPiece.Team == PieceTeam.Black) return false;
+                currentPiece.MoveTo(targetPiece);
             }
             else
             {
-                if (currentPiece == null || currentPiece.Team == PieceTeam.White) return false;
-                currentPiece.MoveTo();
+                if (currentPiece.Team == PieceTeam.White) return false;
+                currentPiece.MoveTo(targetPiece);
             }
 
-            this.logService.LogWithColor($"Current piece: {currentPiece.Row}, {currentPiece.Col}, Team: {currentPiece.Team}", Color.green);
-            if (targetPiece != null)
-            {
-                this.logService.LogWithColor($"Target piece: {targetPiece.Row}, {targetPiece.Col}, Team: {targetPiece.Team}", Color.green);
-            }
-            else
-            {
-                this.logService.LogWithColor("Move to blank space", Color.red);
-            }
             this.isWhiteTurn = !this.isWhiteTurn;
+            currentPiece.ReplaceData(targetIndex.x, targetIndex.y);
             return true;
         }
 

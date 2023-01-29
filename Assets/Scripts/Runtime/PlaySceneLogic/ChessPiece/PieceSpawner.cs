@@ -5,16 +5,19 @@ namespace Runtime.PlaySceneLogic.ChessPiece
     using GameFoundation.Scripts.AssetLibrary;
     using GameFoundation.Scripts.Utilities.ObjectPool;
     using UnityEngine;
+    using Zenject;
 
     public class PieceSpawner
     {
         private readonly IGameAssets       gameAssets;
         private readonly ObjectPoolManager objectPoolManager;
+        private readonly DiContainer       diContainer;
 
-        public PieceSpawner(IGameAssets gameAssets, ObjectPoolManager objectPoolManager)
+        public PieceSpawner(IGameAssets gameAssets, ObjectPoolManager objectPoolManager, DiContainer diContainer)
         {
             this.gameAssets        = gameAssets;
             this.objectPoolManager = objectPoolManager;
+            this.diContainer       = diContainer;
         }
 
         public async UniTask<BaseChessPiece[,]> SpawnAllPieces(int boardRows, int boardColumn, Transform parent)
@@ -56,6 +59,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece
         {
             if (type == PieceType.None) return null;
             var piece = await this.objectPoolManager.Spawn(Enum.GetName(typeof(PieceType), type), parent);
+            this.diContainer.InjectGameObject(piece);
             piece.GetComponent<MeshRenderer>().material = team != PieceTeam.None
                 ? await this.gameAssets.LoadAssetAsync<Material>(Enum.GetName(typeof(PieceTeam), team) + " " + Enum.GetName(typeof(PieceType), type))
                 : null;
