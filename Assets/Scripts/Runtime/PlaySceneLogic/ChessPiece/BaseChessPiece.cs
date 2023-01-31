@@ -33,6 +33,11 @@ namespace Runtime.PlaySceneLogic.ChessPiece
 
         public virtual void MoveTo(GameObject targetTile) { this.transform.DOMove(targetTile.transform.position, GameStaticValue.MoveDuration); }
 
+        public virtual bool IsBlockByAlies(BaseChessPiece targetPiece)
+        {
+            if (targetPiece == null) return false;
+            return this.Team == targetPiece.Team;
+        }
         public abstract void Attack(BaseChessPiece targetPiece);
     }
 }

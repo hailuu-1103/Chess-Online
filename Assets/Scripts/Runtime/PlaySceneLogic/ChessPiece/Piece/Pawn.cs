@@ -30,13 +30,13 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             }
 
             // Kill move
-            if (this.Row != 7)
+            if (this.Row != 7 && this.Col + 1 <= 7)
             {
                 if (runtimePieces[this.Row + direction, this.Col + 1] != null && runtimePieces[this.Row + direction, this.Col + 1].Team != this.Team)
                     availableMoves.Add(new Vector2Int(this.Row + direction, this.Col + 1));
             }
 
-            if (this.Row == 0) return availableMoves;
+            if (this.Row == 0 && this.Col - 1 <= 0) return availableMoves;
             if (runtimePieces[this.Row + direction, this.Col - 1] != null && runtimePieces[this.Row + direction, this.Col - 1].Team != this.Team)
             {
                 availableMoves.Add(new Vector2Int(this.Row + direction, this.Col - 1));
@@ -48,15 +48,15 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
         public override void MoveTo(GameObject targetTile)
         {
             base.MoveTo(targetTile);
-            var targetPiece = this.boardController.GetPieceByIndex(this.boardController.GetTileIndex(targetTile));
-            if (this.Team == PieceTeam.White && targetPiece.Row == 7)
-            {
-                this.logService.LogWithColor("Implement white pawn promotion here", Color.yellow);
-            } 
-            if (this.Team == PieceTeam.Black && targetPiece.Row == 0)
-            {
-                this.logService.LogWithColor("Implement black pawn promotion here", Color.yellow);
-            } 
+            // var targetPiece = this.boardController.GetPieceByIndex(this.boardController.GetTileIndex(targetTile));
+            // if (this.Team == PieceTeam.White && targetPiece.Row == 7)
+            // {
+            //     this.logService.LogWithColor("Implement white pawn promotion here", Color.yellow);
+            // } 
+            // if (this.Team == PieceTeam.Black && targetPiece.Row == 0)
+            // {
+            //     this.logService.LogWithColor("Implement black pawn promotion here", Color.yellow);
+            // } 
         }
 
         public override void Attack(BaseChessPiece targetPiece) { this.logService.LogWithColor($"Attack on {targetPiece.Type}", Color.blue); }
