@@ -14,5 +14,10 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
         {
             
         }
+
+        public override void PreMove(BaseChessPiece targetPiece)
+        {
+            
+        }
     }
 }

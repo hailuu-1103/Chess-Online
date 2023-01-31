@@ -13,33 +13,33 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             var direction = this.Team == PieceTeam.White ? 1 : -1;
 
             // One in front
-            if (runtimePieces[this.Row + direction, this.Col] == null)
+            if (runtimePieces[this.Row, this.Col + direction] == null)
             {
-                availableMoves.Add(new Vector2Int(this.Row + direction, this.Col));
+                availableMoves.Add(new Vector2Int(this.Row, this.Col + direction));
             }
 
             // Two in front
             switch (this.Team)
             {
                 // White team
-                case PieceTeam.White when this.Row == 1 && runtimePieces[this.Row + direction * 2, this.Col] == null:
+                case PieceTeam.White when this.Col == 1 && runtimePieces[this.Row, this.Col + direction * 2] == null:
                 // Black team
-                case PieceTeam.Black when this.Row == 6 && runtimePieces[this.Row + direction * 2, this.Col] == null:
-                    availableMoves.Add(new Vector2Int(this.Row + direction * 2, this.Col));
+                case PieceTeam.Black when this.Col == 6 && runtimePieces[this.Row, this.Col + direction * 2] == null:
+                    availableMoves.Add(new Vector2Int(this.Row, this.Col + direction * 2));
                     break;
             }
 
             // Kill move
-            if (this.Row != 7 && this.Col + 1 <= 7)
+            if (this.Col != 7 && this.Row + 1 <= 7)
             {
-                if (runtimePieces[this.Row + direction, this.Col + 1] != null && runtimePieces[this.Row + direction, this.Col + 1].Team != this.Team)
-                    availableMoves.Add(new Vector2Int(this.Row + direction, this.Col + 1));
+                if (runtimePieces[this.Row + 1, this.Col + direction] != null && runtimePieces[this.Row + 1, this.Col + direction].Team != this.Team)
+                    availableMoves.Add(new Vector2Int(this.Row + 1, this.Col + direction));
             }
 
-            if (this.Row == 0 && this.Col - 1 <= 0) return availableMoves;
-            if (runtimePieces[this.Row + direction, this.Col - 1] != null && runtimePieces[this.Row + direction, this.Col - 1].Team != this.Team)
+            if (this.Col == 0 || this.Row - 1 <= 0) return availableMoves;
+            if (runtimePieces[this.Row - 1, this.Col + direction] != null && runtimePieces[this.Row - 1, this.Col + direction].Team != this.Team)
             {
-                availableMoves.Add(new Vector2Int(this.Row + direction, this.Col - 1));
+                availableMoves.Add(new Vector2Int(this.Row - 1, this.Col + direction));
             }
 
             return availableMoves;
@@ -59,6 +59,11 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             // } 
         }
 
-        public override void Attack(BaseChessPiece targetPiece) { this.logService.LogWithColor($"Attack on {targetPiece.Type}", Color.blue); }
+        public override void Attack(BaseChessPiece targetPiece)  { this.logService.LogWithColor($"Attack on {targetPiece.Type}", Color.blue); }
+
+        public override void PreMove(BaseChessPiece targetPiece)
+        {
+            
+        }
     }
 }

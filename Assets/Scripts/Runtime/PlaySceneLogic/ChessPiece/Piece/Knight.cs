@@ -5,7 +5,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
 
     public class Knight : BaseChessPiece
     {
-        private int[,] moves = {{2,1}, {1,2}, {-1,2}, {-2,1}, {-2,-1}, {-1,-2}, {1,-2}, {2,-1}};
+        private readonly int[,] moves = {{2,1}, {1,2}, {-1,2}, {-2,1}, {-2,-1}, {-1,-2}, {1,-2}, {2,-1}};
         public override List<Vector2Int> GetAvailableMoves()
         {
             var runtimePieces  = this.boardController.runtimePieces;
@@ -14,12 +14,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             {
                 var newX = this.Row + this.moves[i, 0];
                 var newY = this.Col + this.moves[i, 1];
-                if(newX < 0 || newY < 0) continue;
-                if (runtimePieces[newX, newY] != null && runtimePieces[newX, newY].Team == this.Team)
-                {
-                    this.logService.LogWithColor("Implement pre-move here", Color.green);
-                    continue;
-                }
+                if(newX < 0 || newY < 0 || newX > 7 || newY > 7) continue;
                 availableMoves.Add(new Vector2Int(newX, newY));
             }
             return availableMoves;
@@ -27,6 +22,12 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
 
         public override void Attack(BaseChessPiece targetPiece)
         {
+            
+        }
+
+        public override void PreMove(BaseChessPiece targetPiece)
+        {
+            
         }
     }
 }

@@ -91,8 +91,13 @@ namespace Runtime.PlaySceneLogic
                     currentPiece.ReplaceData(this.currentlyTileIndex.x, this.currentlyTileIndex.y);
                 } else if (targetPiece != null && targetPiece.Team != currentPiece.Team)
                 {
-                    this.logService.LogWithColor("Attack opponent piece!", Color.magenta);
+                    this.logService.LogWithColor("Implement attack opponent piece here!", Color.yellow);
                     currentPiece.Attack(targetPiece);
+                    currentPiece.ReplaceData(this.currentlyTileIndex.x, this.currentlyTileIndex.y);
+                } else if (targetPiece != null && targetPiece.Team == currentPiece.Team)
+                {
+                    this.logService.LogWithColor("Implement pre-move here!", Color.yellow);
+                    currentPiece.PreMove(targetPiece);
                     currentPiece.ReplaceData(this.currentlyTileIndex.x, this.currentlyTileIndex.y);
                 }
 

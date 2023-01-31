@@ -39,5 +39,6 @@ namespace Runtime.PlaySceneLogic.ChessPiece
             return this.Team == targetPiece.Team;
         }
         public abstract void Attack(BaseChessPiece targetPiece);
+        public abstract void PreMove(BaseChessPiece targetPiece);
     }
 }

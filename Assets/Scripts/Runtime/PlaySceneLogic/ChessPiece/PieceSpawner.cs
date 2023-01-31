@@ -48,7 +48,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece
                         };
                     }
 
-                    pieces[i, j] = await this.SpawnSinglePiece(parent, pieceType, pieceTeam, i, j);
+                    pieces[j, i] = await this.SpawnSinglePiece(parent, pieceType, pieceTeam, i, j);
                 }
             }
 
@@ -63,10 +63,10 @@ namespace Runtime.PlaySceneLogic.ChessPiece
             piece.GetComponent<MeshRenderer>().material = team != PieceTeam.None
                 ? await this.gameAssets.LoadAssetAsync<Material>(Enum.GetName(typeof(PieceTeam), team) + " " + Enum.GetName(typeof(PieceType), type))
                 : null;
-            piece.transform.position = new Vector3(x, GameStaticValue.TileOffsetY, y);
+            piece.transform.position = new Vector3(y, GameStaticValue.TileOffsetY, x);
             var baseChessPiece = piece.GetComponent<BaseChessPiece>();
-            baseChessPiece.Row  = x;
-            baseChessPiece.Col  = y;
+            baseChessPiece.Row  = y;
+            baseChessPiece.Col  = x;
             baseChessPiece.Type = type;
             baseChessPiece.Team = team;
             return baseChessPiece;

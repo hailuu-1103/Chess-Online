@@ -23,7 +23,7 @@ namespace Runtime.PlaySceneLogic.ChessTile
             {
                 for (var j = 0; j < boardColumn; j++)
                 {
-                    tiles[i, j] = await this.GenerateSingleTiles(i, j, parent);
+                    tiles[j, i] = await this.GenerateSingleTiles(i, j, parent);
                 }
             }
 
@@ -33,9 +33,9 @@ namespace Runtime.PlaySceneLogic.ChessTile
         private async UniTask<GameObject> GenerateSingleTiles(int x, int y, Transform parent)
         {
             var tileObj = await this.objectPoolManager.Spawn("Tile", parent);
-            tileObj.name                                  = $"X:{x}, Y:{y}";
+            tileObj.name                                  = $"X:{y}, Y:{x}";
             tileObj.layer                                 = LayerMask.NameToLayer("Tile");
-            tileObj.transform.position                    = new Vector3(x, GameStaticValue.TileOffsetY, y);
+            tileObj.transform.position                    = new Vector3(y, GameStaticValue.TileOffsetY, x);
             tileObj.GetComponent<MeshRenderer>().material = await this.gameAssets.LoadAssetAsync<Material>("TransparentMat");
             return tileObj;
         }
