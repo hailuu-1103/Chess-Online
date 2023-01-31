@@ -9,109 +9,67 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
         {
             var availableMoves = new List<Vector2Int>();
             var runtimePieces  = this.boardController.runtimePieces;
-            // Check top left diagonal
-            for (var i = 1; i < GameStaticValue.BoardRows; i++)
-            {
-                if (this.Row + i <= 7 && this.Col + i <= 7)
-                {
-                    var topRightDiagonalPiece = runtimePieces[this.Row + i, this.Col + i];
-                    if (this.IsBlockByAlies(topRightDiagonalPiece)) break;
-                    // Blank space or enemy piece
-                    if (topRightDiagonalPiece == null)
-                    {
-                        availableMoves.Add(new Vector2Int(this.Row + i, this.Col + i));
-                    }
-                }
-            }
+            this.CheckTopLeftDiagonal(runtimePieces, availableMoves);
 
-            // Check top right diagonal
-            for (var i = 1; i < GameStaticValue.BoardRows; i++)
-            {
-                if (this.Row - i >= 0 && this.Col + i <= 7)
-                {
-                    var topLeftDiagonalPiece = runtimePieces[this.Row - i, this.Col + i];
-                    if (this.IsBlockByAlies(topLeftDiagonalPiece)) break;
-                    if (topLeftDiagonalPiece == null)
-                    {
-                        availableMoves.Add(new Vector2Int(this.Row - i, this.Col + i));
-                    }
-                }
-            }
+            this.CheckTopRightDiagonal(runtimePieces, availableMoves);
 
-            // Check bot right diagonal
-            for (var i = 1; i < GameStaticValue.BoardRows; i++)
-            {
-                if (this.Row + i <= 7 && this.Col - i >= 0)
-                {
-                    var botRightDiagonalPiece = runtimePieces[this.Row + i, this.Col - i];
-                    if (this.IsBlockByAlies(botRightDiagonalPiece)) break;
-                    if (botRightDiagonalPiece == null)
-                    {
-                        availableMoves.Add(new Vector2Int(this.Row + i, this.Col - i));
-                    }
-                }
-            }
+            this.CheckBotLeftDiagonal(runtimePieces, availableMoves);
 
-            // Check bot left diagonal
-            for (var i = 1; i < GameStaticValue.BoardRows; i++)
-            {
-                if (this.Row - i >= 0 && this.Col - i >= 0)
-                {
-                    var botLeftDiagonalPiece = runtimePieces[this.Row - i, this.Col - i];
-                    if (this.IsBlockByAlies(botLeftDiagonalPiece)) break;
-                    if (botLeftDiagonalPiece == null)
-                    {
-                        availableMoves.Add(new Vector2Int(this.Row - i, this.Col - i));
-                    }
-                }
-            }
+            this.CheckBotRightDiagonal(runtimePieces, availableMoves);
             return availableMoves;
         }
 
-        private void CheckBotLeftDiagonal(int i, BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
+        private void CheckBotRightDiagonal(BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
         {
-            if (this.Row - i >= 0 && this.Col - i >= 0)
+            for (var i = 1; i < GameStaticValue.BoardRows; i++)
             {
+                if (this.Row - i < 0 || this.Col - i < 0) continue;
                 var botLeftDiagonalPiece = runtimePieces[this.Row - i, this.Col - i];
-                if (botLeftDiagonalPiece.Team == this.Team) return;
-                if (botLeftDiagonalPiece == null || botLeftDiagonalPiece.Team != this.Team)
+                if (this.IsBlockByAlies(botLeftDiagonalPiece)) break;
+                if (botLeftDiagonalPiece == null)
                 {
                     availableMoves.Add(new Vector2Int(this.Row - i, this.Col - i));
                 }
             }
         }
 
-        private void CheckBotRightDiagonal(int i, BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
+        private void CheckBotLeftDiagonal(BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
         {
-            if (this.Row + i <= 7 && this.Col - i >= 0)
+            for (var i = 1; i < GameStaticValue.BoardRows; i++)
             {
+                if (this.Row + i > 7 || this.Col - i < 0) continue;
                 var botRightDiagonalPiece = runtimePieces[this.Row + i, this.Col - i];
-                if (botRightDiagonalPiece == null || botRightDiagonalPiece.Team != this.Team)
+                if (this.IsBlockByAlies(botRightDiagonalPiece)) break;
+                if (botRightDiagonalPiece == null)
                 {
                     availableMoves.Add(new Vector2Int(this.Row + i, this.Col - i));
                 }
             }
         }
 
-        private void CheckTopRightDiagonal(int i, BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
+        private void CheckTopRightDiagonal(BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
         {
-            if (this.Row - i >= 0 && this.Col + i <= 7)
+            for (var i = 1; i < GameStaticValue.BoardRows; i++)
             {
+                if (this.Row - i < 0 || this.Col + i > 7) continue;
                 var topLeftDiagonalPiece = runtimePieces[this.Row - i, this.Col + i];
-                if (topLeftDiagonalPiece == null || topLeftDiagonalPiece.Team != this.Team)
+                if (this.IsBlockByAlies(topLeftDiagonalPiece)) break;
+                if (topLeftDiagonalPiece == null)
                 {
                     availableMoves.Add(new Vector2Int(this.Row - i, this.Col + i));
                 }
             }
         }
 
-        private void CheckTopLeftDiagonal(int i, BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
+        private void CheckTopLeftDiagonal(BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
         {
-            if (this.Row + i <= 7 && this.Col + i <= 7)
+            for (var i = 1; i < GameStaticValue.BoardRows; i++)
             {
+                if (this.Row + i > 7 || this.Col + i > 7) continue;
                 var topRightDiagonalPiece = runtimePieces[this.Row + i, this.Col + i];
+                if (this.IsBlockByAlies(topRightDiagonalPiece)) break;
                 // Blank space or enemy piece
-                if (topRightDiagonalPiece == null || topRightDiagonalPiece.Team != this.Team)
+                if (topRightDiagonalPiece == null)
                 {
                     availableMoves.Add(new Vector2Int(this.Row + i, this.Col + i));
                 }
