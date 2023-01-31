@@ -10,7 +10,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             return null;
         }
 
-        public override void MoveTo(BaseChessPiece targetPiece)
+        public override void Attack(BaseChessPiece targetPiece)
         {
             
         }

@@ -62,13 +62,16 @@ namespace Runtime.PlaySceneLogic
             // Show available move
             if (this.GetPieceByIndex(signal.CurrentTileIndex) != null)
             {
-                var currentPiece = this.GetPieceByIndex(signal.CurrentTileIndex);
-                this.availableMoves = currentPiece.GetAvailableMoves();
+                var currentPiece  = this.GetPieceByIndex(signal.CurrentTileIndex);
+                if(this.inTurnMoveCount != 1)
+                    this.availableMoves = currentPiece.GetAvailableMoves();
                 this.tileHighlighter.HighlightTiles(this.availableMoves.Select(this.GetTileByIndex).ToArray());
             }
             
             this.previousTileIndex =  this.currentlyTileIndex;
             this.inTurnMoveCount   += 1;
+            
+            // Is it first move?
             if (this.inTurnMoveCount == 1)
             {
                 this.currentlyTileIndex = signal.CurrentTileIndex;
@@ -79,12 +82,20 @@ namespace Runtime.PlaySceneLogic
             this.tileHighlighter.RemoveHighlightTiles(this.availableMoves.Select(this.GetTileByIndex).ToArray());
             if (this.IsValidMove(this.previousTileIndex, this.currentlyTileIndex))
             {
-                var targetPos = this.runtimeTiles[this.currentlyTileIndex.x, this.currentlyTileIndex.y].transform.position;
-                
-                // Move animation
-                this.runtimePieces[this.previousTileIndex.x, this.previousTileIndex.y].transform
-                    .DOMove(targetPos, 1f);
-                
+                var currentPiece = this.GetPieceByIndex(this.previousTileIndex);
+                var targetPiece  = this.GetPieceByIndex(this.currentlyTileIndex);
+                var targetTile   = this.GetTileByIndex(this.currentlyTileIndex);
+                if (targetPiece == null)
+                {
+                    currentPiece.MoveTo(targetTile);
+                    currentPiece.ReplaceData(this.currentlyTileIndex.x, this.currentlyTileIndex.y);
+                } else if (targetPiece != null && targetPiece.Team != currentPiece.Team)
+                {
+                    this.logService.LogWithColor("Attack opponent piece!", Color.magenta);
+                    currentPiece.Attack(targetPiece);
+                    currentPiece.ReplaceData(this.currentlyTileIndex.x, this.currentlyTileIndex.y);
+                }
+
                 this.runtimePieces[this.currentlyTileIndex.x, this.currentlyTileIndex.y] = this.GetPieceByIndex(this.previousTileIndex);
                 this.runtimePieces[this.previousTileIndex.x, this.previousTileIndex.y]   = null;
             }
@@ -99,22 +110,18 @@ namespace Runtime.PlaySceneLogic
         private bool IsValidMove(Vector2Int currentIndex, Vector2Int targetIndex)
         {
             var currentPiece   = this.GetPieceByIndex(currentIndex);
-            var targetPiece    = this.GetPieceByIndex(targetIndex);
 
             if (currentPiece == null || !this.availableMoves.Contains(targetIndex)) return false;
             if (this.isWhiteTurn)
             {
                 if (currentPiece.Team == PieceTeam.Black) return false;
-                currentPiece.MoveTo(targetPiece);
             }
             else
             {
                 if (currentPiece.Team == PieceTeam.White) return false;
-                currentPiece.MoveTo(targetPiece);
             }
 
             this.isWhiteTurn = !this.isWhiteTurn;
-            currentPiece.ReplaceData(targetIndex.x, targetIndex.y);
             return true;
         }
 

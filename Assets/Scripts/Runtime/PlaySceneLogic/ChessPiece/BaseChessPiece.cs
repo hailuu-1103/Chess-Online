@@ -1,6 +1,8 @@
 namespace Runtime.PlaySceneLogic.ChessPiece
 {
     using System.Collections.Generic;
+    using DG.Tweening;
+    using GameFoundation.Scripts.Utilities.LogService;
     using Runtime.PlaySceneLogic.ChessTile;
     using UnityEngine;
     using Zenject;
@@ -13,10 +15,12 @@ namespace Runtime.PlaySceneLogic.ChessPiece
         public PieceType Type;
 
         protected BoardController boardController;
+        protected ILogService     logService;
         [Inject]
-        private void Init(BoardController controller)
+        private void Init(BoardController controller, ILogService service)
         {
             this.boardController = controller;
+            this.logService      = service;
         }
 
         public abstract List<Vector2Int> GetAvailableMoves();
@@ -26,15 +30,12 @@ namespace Runtime.PlaySceneLogic.ChessPiece
             this.Row = row;
             this.Col = col;
         }
-        public virtual void MoveTo(BaseChessPiece targetPiece)
+        public virtual void MoveTo(GameObject targetTile)
         {
-            if(this.Team != targetPiece.Team) this.Attack(targetPiece);
+            this.transform.DOMove(targetTile.transform.position, 1f);
         }
 
-        public virtual void Attack(BaseChessPiece targetPiece)
-        {
-            
-        }
+        public abstract void Attack(BaseChessPiece targetPiece);
 
     }
 }

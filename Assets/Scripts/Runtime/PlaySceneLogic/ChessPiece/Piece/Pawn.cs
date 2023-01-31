@@ -1,7 +1,6 @@
 namespace Runtime.PlaySceneLogic.ChessPiece.Piece
 {
     using System.Collections.Generic;
-    using System.Linq;
     using UnityEngine;
 
     public class Pawn : BaseChessPiece
@@ -11,35 +10,41 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             var runtimePieces  = this.boardController.runtimePieces;
             var availableMoves = new List<Vector2Int>();
 
-            if (this.Team == PieceTeam.White)
+            var direction = this.Team == PieceTeam.White ? 1 : -1;
+
+            // One in front
+            if (runtimePieces[this.Row + direction, this.Col] == null)
             {
-                if (runtimePieces[this.Row + 1, this.Col] != null || this.Row + 1 > 7) return availableMoves;
-                availableMoves.Add(new Vector2Int(this.Row + 1, this.Col));
-                if (runtimePieces[this.Row + 2, this.Col] == null && this.Row + 2 <= 7)
-                {
-                    availableMoves.Add(new Vector2Int(this.Row + 2, this.Col));
-                }
+                availableMoves.Add(new Vector2Int(this.Row + direction, this.Col));
             }
-            else
+
+            // Two in front
+            switch (this.Team)
             {
-                if (runtimePieces[this.Row - 1, this.Col] != null || this.Row - 1 < 0) return availableMoves;
-                availableMoves.Add(new Vector2Int(this.Row - 1, this.Col));
-                if (runtimePieces[this.Row - 2, this.Col] == null && this.Row - 2 >= 0)
-                {
-                    availableMoves.Add(new Vector2Int(this.Row - 2, this.Col));
-                }
+                // White team
+                case PieceTeam.White when this.Row == 1 && runtimePieces[this.Row + direction * 2, this.Col] == null:
+                // Black team
+                case PieceTeam.Black when this.Row == 6 && runtimePieces[this.Row + direction * 2, this.Col] == null:
+                    availableMoves.Add(new Vector2Int(this.Row + direction * 2, this.Col));
+                    break;
             }
-           
+
+            // Kill move
+            if (this.Row != 7)
+            {
+                if (runtimePieces[this.Row + direction, this.Col + 1] != null && runtimePieces[this.Row + direction, this.Col + 1].Team != this.Team)
+                    availableMoves.Add(new Vector2Int(this.Row + direction, this.Col + 1));
+            }
+
+            if (this.Row == 0) return availableMoves;
+            if (runtimePieces[this.Row + direction, this.Col - 1] != null && runtimePieces[this.Row + direction, this.Col - 1].Team != this.Team)
+            {
+                availableMoves.Add(new Vector2Int(this.Row + direction, this.Col - 1));
+            }
 
             return availableMoves;
         }
 
-        public override void MoveTo(BaseChessPiece targetPiece)
-        {
-            var availableMoves = this.GetAvailableMoves();
-            var tiles          = availableMoves.Select(moveIndex => this.boardController.GetTileByIndex(moveIndex)).ToArray();
-        }
-
-        public override void Attack(BaseChessPiece targetPiece) { base.Attack(targetPiece); }
+        public override void Attack(BaseChessPiece targetPiece) { this.logService.LogWithColor($"Attack on {targetPiece.Type}", Color.blue); }
     }
 }

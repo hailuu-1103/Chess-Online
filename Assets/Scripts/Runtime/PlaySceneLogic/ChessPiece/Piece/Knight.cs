@@ -7,9 +7,12 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
     {
         public override List<Vector2Int> GetAvailableMoves()
         {
+            var runtimePieces = this.boardController.runtimePieces;
             return null;
         }
 
-        public override void             MoveTo(BaseChessPiece targetPiece) { throw new System.NotImplementedException(); }
+        public override void Attack(BaseChessPiece targetPiece)
+        {
+        }
     }
 }
