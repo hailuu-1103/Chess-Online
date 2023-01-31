@@ -45,6 +45,20 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             return availableMoves;
         }
 
+        public override void MoveTo(GameObject targetTile)
+        {
+            base.MoveTo(targetTile);
+            var targetPiece = this.boardController.GetPieceByIndex(this.boardController.GetTileIndex(targetTile));
+            if (this.Team == PieceTeam.White && targetPiece.Row == 7)
+            {
+                this.logService.LogWithColor("Implement white pawn promotion here", Color.yellow);
+            } 
+            if (this.Team == PieceTeam.Black && targetPiece.Row == 0)
+            {
+                this.logService.LogWithColor("Implement black pawn promotion here", Color.yellow);
+            } 
+        }
+
         public override void Attack(BaseChessPiece targetPiece) { this.logService.LogWithColor($"Attack on {targetPiece.Type}", Color.blue); }
     }
 }
