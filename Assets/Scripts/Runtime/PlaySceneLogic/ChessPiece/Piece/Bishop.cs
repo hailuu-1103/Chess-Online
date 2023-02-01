@@ -31,7 +31,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
                 var botLeftDiagonalPiece = runtimePieces[this.row - i, this.col - i];
                 if (botLeftDiagonalPiece != null)
                 {
-                    availableMoves.Add(new Vector2Int(this.row - 1, this.col - 1));
+                    availableMoves.Add(new Vector2Int(this.row - 1, this.col - i));
                     break;
                 }
 
@@ -47,7 +47,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
                 var botRightDiagonalPiece = runtimePieces[this.row + i, this.col - i];
                 if (botRightDiagonalPiece != null)
                 {
-                    availableMoves.Add(new Vector2Int(this.row + 1, this.col - 1));
+                    availableMoves.Add(new Vector2Int(this.row + i, this.col - i));
                     break;
                 }
 
@@ -63,7 +63,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
                 var topLeftDiagonalPiece = runtimePieces[this.row - i, this.col + i];
                 if (topLeftDiagonalPiece != null)
                 {
-                    availableMoves.Add(new Vector2Int(this.row - 1, this.col + 1));
+                    availableMoves.Add(new Vector2Int(this.row - i, this.col + i));
                     break;
                 }
 
@@ -79,7 +79,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
                 var topRightDiagonalPiece = runtimePieces[this.row + i, this.col + i];
                 if (topRightDiagonalPiece != null)
                 {
-                    availableMoves.Add(new Vector2Int(this.row + 1, this.col + 1));
+                    availableMoves.Add(new Vector2Int(this.row + i, this.col + i));
                     break;
                 }
 
