@@ -65,10 +65,10 @@ namespace Runtime.PlaySceneLogic.ChessPiece
                 : null;
             piece.transform.position = new Vector3(y, GameStaticValue.TileOffsetY, x);
             var baseChessPiece = piece.GetComponent<BaseChessPiece>();
-            baseChessPiece.Row  = y;
-            baseChessPiece.Col  = x;
-            baseChessPiece.Type = type;
-            baseChessPiece.Team = team;
+            baseChessPiece.row  = y;
+            baseChessPiece.col  = x;
+            baseChessPiece.type = type;
+            baseChessPiece.team = team;
             return baseChessPiece;
         }
     }

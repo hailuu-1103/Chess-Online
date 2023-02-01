@@ -89,12 +89,12 @@ namespace Runtime.PlaySceneLogic
                 {
                     currentPiece.MoveTo(targetTile);
                     currentPiece.ReplaceData(this.currentlyTileIndex.x, this.currentlyTileIndex.y);
-                } else if (targetPiece != null && targetPiece.Team != currentPiece.Team)
+                } else if (targetPiece != null && targetPiece.team != currentPiece.team)
                 {
                     this.logService.LogWithColor("Implement attack opponent piece here!", Color.yellow);
                     currentPiece.Attack(targetPiece);
                     currentPiece.ReplaceData(this.currentlyTileIndex.x, this.currentlyTileIndex.y);
-                } else if (targetPiece != null && targetPiece.Team == currentPiece.Team)
+                } else if (targetPiece != null && targetPiece.team == currentPiece.team)
                 {
                     this.logService.LogWithColor("Implement pre-move here!", Color.yellow);
                     currentPiece.PreMove(targetPiece);
@@ -119,11 +119,11 @@ namespace Runtime.PlaySceneLogic
             if (currentPiece == null || !this.availableMoves.Contains(targetIndex)) return false;
             if (this.isWhiteTurn)
             {
-                if (currentPiece.Team == PieceTeam.Black) return false;
+                if (currentPiece.team == PieceTeam.Black) return false;
             }
             else
             {
-                if (currentPiece.Team == PieceTeam.White) return false;
+                if (currentPiece.team == PieceTeam.White) return false;
             }
 
             this.isWhiteTurn = !this.isWhiteTurn;

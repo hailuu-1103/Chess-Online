@@ -8,10 +8,10 @@ namespace Runtime.PlaySceneLogic.ChessPiece
 
     public abstract class BaseChessPiece : MonoBehaviour
     {
-        public PieceTeam Team;
-        public int       Row;
-        public int       Col;
-        public PieceType Type;
+        public PieceTeam team;
+        public int       row;
+        public int       col;
+        public PieceType type;
 
         protected BoardController boardController;
         protected ILogService     logService;
@@ -27,17 +27,12 @@ namespace Runtime.PlaySceneLogic.ChessPiece
 
         public virtual void ReplaceData(int row, int col)
         {
-            this.Row = row;
-            this.Col = col;
+            this.row = row;
+            this.col = col;
         }
 
         public virtual void MoveTo(GameObject targetTile) { this.transform.DOMove(targetTile.transform.position, GameStaticValue.MoveDuration); }
-
-        public virtual bool IsBlockByAlies(BaseChessPiece targetPiece)
-        {
-            if (targetPiece == null) return false;
-            return this.Team == targetPiece.Team;
-        }
+        
         public abstract void Attack(BaseChessPiece targetPiece);
         public abstract void PreMove(BaseChessPiece targetPiece);
     }

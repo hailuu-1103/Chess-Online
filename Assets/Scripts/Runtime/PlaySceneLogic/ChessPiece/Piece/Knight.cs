@@ -12,8 +12,8 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             var availableMoves = new List<Vector2Int>();
             for (var i = 0; i < GameStaticValue.BoardRows; i++)
             {
-                var newX = this.Row + this.moves[i, 0];
-                var newY = this.Col + this.moves[i, 1];
+                var newX = this.row + this.moves[i, 0];
+                var newY = this.col + this.moves[i, 1];
                 if(newX < 0 || newY < 0 || newX > 7 || newY > 7) continue;
                 availableMoves.Add(new Vector2Int(newX, newY));
             }
