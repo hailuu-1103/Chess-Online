@@ -9,88 +9,18 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
         {
             var availableMoves = new List<Vector2Int>();
             var runtimePieces  = this.boardController.runtimePieces;
-            // Check top right diagonal
-            this.CheckTopRightDiagonal(runtimePieces, availableMoves);
-
-            // Check top left diagonal
-            this.CheckTopLeftDiagonal(runtimePieces, availableMoves);
-
-            // Check bot right diagonal
-            this.CheckBotRightDiagonal(runtimePieces, availableMoves);
-
-            // Check bot left diagonal
-            this.CheckBotLeftDiagonal(runtimePieces, availableMoves);
+            this.pieceRegularMoveHelper.CheckTopRightDiagonal(this.row, this.col, runtimePieces, availableMoves);
+            
+            this.pieceRegularMoveHelper.CheckTopLeftDiagonal(this.row, this.col, runtimePieces, availableMoves);
+            
+            this.pieceRegularMoveHelper.CheckBotRightDiagonal(this.row, this.col, runtimePieces, availableMoves);
+            
+            this.pieceRegularMoveHelper.CheckBotLeftDiagonal(this.row, this.col, runtimePieces, availableMoves);
             return availableMoves;
         }
+        
+        public override void Attack(BaseChessPiece targetPiece) { }
 
-        private void CheckBotLeftDiagonal(BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
-        {
-            for (var i = 1; i < GameStaticValue.BoardRows; i++)
-            {
-                if (this.row - i < 0 || this.col - i < 0) continue;
-                var botLeftDiagonalPiece = runtimePieces[this.row - i, this.col - i];
-                if (botLeftDiagonalPiece != null)
-                {
-                    availableMoves.Add(new Vector2Int(this.row - 1, this.col - i));
-                    break;
-                }
-
-                availableMoves.Add(new Vector2Int(this.row - i, this.col - i));
-            }
-        }
-
-        private void CheckBotRightDiagonal(BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
-        {
-            for (var i = 1; i < GameStaticValue.BoardRows; i++)
-            {
-                if (this.row + i > 7 || this.col - i < 0) continue;
-                var botRightDiagonalPiece = runtimePieces[this.row + i, this.col - i];
-                if (botRightDiagonalPiece != null)
-                {
-                    availableMoves.Add(new Vector2Int(this.row + i, this.col - i));
-                    break;
-                }
-
-                availableMoves.Add(new Vector2Int(this.row + i, this.col - i));
-            }
-        }
-
-        private void CheckTopLeftDiagonal(BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
-        {
-            for (var i = 1; i < GameStaticValue.BoardRows; i++)
-            {
-                if (this.row - i < 0 || this.col + i > 7) continue;
-                var topLeftDiagonalPiece = runtimePieces[this.row - i, this.col + i];
-                if (topLeftDiagonalPiece != null)
-                {
-                    availableMoves.Add(new Vector2Int(this.row - i, this.col + i));
-                    break;
-                }
-
-                availableMoves.Add(new Vector2Int(this.row - i, this.col + i));
-            }
-        }
-
-        private void CheckTopRightDiagonal(BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
-        {
-            for (var i = 1; i < GameStaticValue.BoardRows; i++)
-            {
-                if (this.row + i > 7 || this.col + i > 7) continue;
-                var topRightDiagonalPiece = runtimePieces[this.row + i, this.col + i];
-                if (topRightDiagonalPiece != null)
-                {
-                    availableMoves.Add(new Vector2Int(this.row + i, this.col + i));
-                    break;
-                }
-
-                availableMoves.Add(new Vector2Int(this.row + i, this.col + i));
-            }
-        }
-
-        public override void Attack(BaseChessPiece targetPiece)  { }
-
-        public override void PreMove(BaseChessPiece targetPiece)
-        {
-        }
+        public override void PreMove(BaseChessPiece targetPiece) { }
     }
 }

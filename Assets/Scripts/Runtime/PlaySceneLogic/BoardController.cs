@@ -2,8 +2,6 @@ namespace Runtime.PlaySceneLogic
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Cysharp.Threading.Tasks;
-    using DG.Tweening;
     using GameFoundation.Scripts.Utilities.LogService;
     using Runtime.Input.Signal;
     using Runtime.PlaySceneLogic.ChessPiece;
@@ -62,22 +60,24 @@ namespace Runtime.PlaySceneLogic
             // Show available move
             if (this.GetPieceByIndex(signal.CurrentTileIndex) != null)
             {
-                var currentPiece  = this.GetPieceByIndex(signal.CurrentTileIndex);
-                if(this.inTurnMoveCount != 1)
+                var currentPiece = this.GetPieceByIndex(signal.CurrentTileIndex);
+                if (this.inTurnMoveCount != 1)
                     this.availableMoves = currentPiece.GetAvailableMoves();
-                this.tileHighlighter.HighlightTiles(this.availableMoves.Select(this.GetTileByIndex).ToArray());
+                this.tileHighlighter.HighlightAvailableMoveTiles(this.availableMoves.Select(this.GetTileByIndex).ToList());
+                var preMoveTile = this.GetPreMoveTiles(currentPiece);
+                if(preMoveTile.Count > 0) this.tileHighlighter.HighlightPreMoveTiles(preMoveTile);
             }
-            
+
             this.previousTileIndex =  this.currentlyTileIndex;
             this.inTurnMoveCount   += 1;
-            
+
             // Is it first move?
             if (this.inTurnMoveCount == 1)
             {
                 this.currentlyTileIndex = signal.CurrentTileIndex;
                 return;
             }
-            
+
             this.currentlyTileIndex = signal.CurrentTileIndex;
             this.tileHighlighter.RemoveHighlightTiles(this.availableMoves.Select(this.GetTileByIndex).ToArray());
             if (this.IsValidMove(this.previousTileIndex, this.currentlyTileIndex))
@@ -89,12 +89,14 @@ namespace Runtime.PlaySceneLogic
                 {
                     currentPiece.MoveTo(targetTile);
                     currentPiece.ReplaceData(this.currentlyTileIndex.x, this.currentlyTileIndex.y);
-                } else if (targetPiece != null && targetPiece.team != currentPiece.team)
+                }
+                else if (targetPiece != null && targetPiece.team != currentPiece.team)
                 {
                     this.logService.LogWithColor("Implement attack opponent piece here!", Color.yellow);
                     currentPiece.Attack(targetPiece);
                     currentPiece.ReplaceData(this.currentlyTileIndex.x, this.currentlyTileIndex.y);
-                } else if (targetPiece != null && targetPiece.team == currentPiece.team)
+                }
+                else if (targetPiece != null && targetPiece.team == currentPiece.team)
                 {
                     this.logService.LogWithColor("Implement pre-move here!", Color.yellow);
                     currentPiece.PreMove(targetPiece);
@@ -106,15 +108,17 @@ namespace Runtime.PlaySceneLogic
             }
 
             if (this.inTurnMoveCount != 2) return;
-            this.inTurnMoveCount    = 0;
+            this.inTurnMoveCount = 0;
             this.availableMoves.Clear();
             this.previousTileIndex  = -Vector2Int.one;
             this.currentlyTileIndex = -Vector2Int.one;
         }
 
+        
+
         private bool IsValidMove(Vector2Int currentIndex, Vector2Int targetIndex)
         {
-            var currentPiece   = this.GetPieceByIndex(currentIndex);
+            var currentPiece = this.GetPieceByIndex(currentIndex);
 
             if (currentPiece == null || !this.availableMoves.Contains(targetIndex)) return false;
             if (this.isWhiteTurn)
@@ -131,7 +135,15 @@ namespace Runtime.PlaySceneLogic
         }
 
         public BaseChessPiece GetPieceByIndex(Vector2Int pieceIndex) => this.runtimePieces[pieceIndex.x, pieceIndex.y];
-
+        private List<GameObject> GetPreMoveTiles(BaseChessPiece currentPiece)
+        {
+            var preMoveTile = new List<GameObject>();
+            foreach (var tileIndex in from tileIndex in this.availableMoves let piece = this.GetPieceByIndex(tileIndex) where (piece != null && piece.team == currentPiece.team) select tileIndex)
+            {
+                preMoveTile.Add(this.GetTileByIndex(tileIndex));
+            }
+            return preMoveTile;
+        }
         public GameObject GetTileByIndex(Vector2Int tileIndex) => this.runtimeTiles[tileIndex.x, tileIndex.y];
 
         public Vector2Int GetTileIndex(GameObject tileObj)

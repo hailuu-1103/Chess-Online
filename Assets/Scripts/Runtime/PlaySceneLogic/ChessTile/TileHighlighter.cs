@@ -1,6 +1,7 @@
 namespace Runtime.PlaySceneLogic.ChessTile
 {
     using System;
+    using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.AssetLibrary;
     using GameFoundation.Scripts.Utilities.LogService;
@@ -35,7 +36,7 @@ namespace Runtime.PlaySceneLogic.ChessTile
             var pieceHoverIndex = enterSignal.CurrentTileIndex;
 
             var transparentMat    = await this.gameAssets.LoadAssetAsync<Material>("TransparentMat");
-            var highlightPieceMat = await this.gameAssets.LoadAssetAsync<Material>("PieceHighlightMat");
+            var highlightPieceMat = await this.gameAssets.LoadAssetAsync<Material>("TileHoverMat");
             //First time hover
             if (this.currentHover == -Vector2Int.one)
             {
@@ -57,11 +58,18 @@ namespace Runtime.PlaySceneLogic.ChessTile
             }
         }
 
-        public async void HighlightTiles(GameObject[] tiles)
+        public async void HighlightPreMoveTiles(List<GameObject> tiles)
         {
             foreach (var tile in tiles)
             {
-                tile.GetComponent<MeshRenderer>().material = await this.gameAssets.LoadAssetAsync<Material>("PieceHighlightMat");
+                tile.GetComponent<MeshRenderer>().material = await this.gameAssets.LoadAssetAsync<Material>("TilePreMoveMat");
+            }
+        }
+        public async void HighlightAvailableMoveTiles(List<GameObject> tiles)
+        {
+            foreach (var tile in tiles)
+            {
+                tile.GetComponent<MeshRenderer>().material = await this.gameAssets.LoadAssetAsync<Material>("TileAvailableMoveMat");
             }
         }
 

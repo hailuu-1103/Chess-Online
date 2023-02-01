@@ -5,19 +5,24 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
 
     public class King : BaseChessPiece
     {
+        private readonly int[,] moves = { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, 1 }, { -1, 0 }, { -1, -1 } };
+
         public override List<Vector2Int> GetAvailableMoves()
         {
-            return null;
+            var availableMoves = new List<Vector2Int>();
+            for (var i = 0; i < 8; i++)
+            {
+                var newX = this.row + this.moves[i, 0];
+                var newY = this.col + this.moves[i, 1];
+                if(newX < 0 || newY < 0 || newX > 7 || newY > 7) continue;
+                availableMoves.Add(new Vector2Int(newX, newY));
+            }
+
+            return availableMoves;
         }
 
-        public override void Attack(BaseChessPiece targetPiece)
-        {
-            
-        }
+        public override void Attack(BaseChessPiece targetPiece) { }
 
-        public override void PreMove(BaseChessPiece targetPiece)
-        {
-            
-        }
+        public override void PreMove(BaseChessPiece targetPiece) { }
     }
 }

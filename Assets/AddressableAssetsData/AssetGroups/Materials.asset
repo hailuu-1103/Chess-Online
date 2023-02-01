@@ -70,11 +70,19 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 65fd24699dfde8a40969f6261b1ec80f
-    m_Address: PieceHighlightMat
+    m_Address: TileHoverMat
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 6d8a8b63190642a4681a9cae2a27fb12
     m_Address: TransparentMat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ba27b4dc3549ade468fb8bf559e3309f
+    m_Address: TileAvailableMoveMat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d4e4a12ed7a3a9f4e8bb83d0955c6094
+    m_Address: TilePreMoveMat
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0

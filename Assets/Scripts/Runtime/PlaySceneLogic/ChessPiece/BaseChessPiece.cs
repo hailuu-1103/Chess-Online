@@ -12,15 +12,17 @@ namespace Runtime.PlaySceneLogic.ChessPiece
         public int       row;
         public int       col;
         public PieceType type;
-
-        protected BoardController boardController;
-        protected ILogService     logService;
-
+        
+        protected BoardController        boardController;
+        protected PieceRegularMoveHelper pieceRegularMoveHelper;
+        protected ILogService            logService;
+        
         [Inject]
-        private void Init(BoardController controller, ILogService service)
+        private void Init(BoardController controller, ILogService service, PieceRegularMoveHelper helper)
         {
-            this.boardController = controller;
-            this.logService      = service;
+            this.boardController        = controller;
+            this.logService             = service;
+            this.pieceRegularMoveHelper = helper;
         }
 
         public abstract List<Vector2Int> GetAvailableMoves();

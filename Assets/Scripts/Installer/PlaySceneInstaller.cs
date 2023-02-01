@@ -21,6 +21,7 @@ namespace Installer
             this.Container.Bind<TileSpawner>().AsCached().NonLazy();
             this.Container.Bind<TileHighlighter>().AsCached().NonLazy();
             this.Container.Bind<PieceSpawner>().AsCached().NonLazy();
+            this.Container.Bind<PieceRegularMoveHelper>().AsCached().NonLazy();
             
             this.Container.Bind<BoardController>().FromComponentInHierarchy().AsCached();
 
