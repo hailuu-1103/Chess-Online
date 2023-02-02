@@ -24,9 +24,11 @@ namespace Runtime.PlaySceneLogic
         [SerializeField] private Transform tileHolder;
         [SerializeField] private Transform pieceHolder;
 
-        public GameObject[,]     runtimeTiles  = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
-        public BaseChessPiece[,] runtimePieces = new BaseChessPiece[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
-
+        public GameObject[,]     runtimeTiles    = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
+        public BaseChessPiece[,] runtimePieces   = new BaseChessPiece[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
+        public List<BaseChessPiece>            deadWhitePieces = new();
+        public List<BaseChessPiece>            deadBlackPieces = new();
+        
         private List<Vector2Int> availableMoves     = new();
         private Vector2Int       currentlyTileIndex = -Vector2Int.one;
         private Vector2Int       previousTileIndex  = -Vector2Int.one;
@@ -93,8 +95,10 @@ namespace Runtime.PlaySceneLogic
                 else if (targetPiece != null && targetPiece.team != currentPiece.team)
                 {
                     this.logService.LogWithColor("Implement attack opponent piece here!", Color.yellow);
+                    currentPiece.MoveTo(targetTile);
                     currentPiece.Attack(targetPiece);
                     currentPiece.ReplaceData(this.currentlyTileIndex.x, this.currentlyTileIndex.y);
+                    
                 }
                 else if (targetPiece != null && targetPiece.team == currentPiece.team)
                 {

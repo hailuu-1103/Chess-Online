@@ -1,6 +1,7 @@
 namespace Runtime.PlaySceneLogic.ChessPiece.Piece
 {
     using System.Collections.Generic;
+    using GameFoundation.Scripts.Utilities.ObjectPool;
     using UnityEngine;
 
     public class Pawn : BaseChessPiece
@@ -44,8 +45,8 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
 
             return availableMoves;
         }
+
         
-        public override void Attack(BaseChessPiece targetPiece)  { this.logService.LogWithColor($"Attack on {targetPiece.type}", Color.blue); }
 
         public override void PreMove(BaseChessPiece targetPiece)
         {

@@ -18,8 +18,6 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             this.pieceRegularMoveHelper.CheckBotLeftDiagonal(this.row, this.col, runtimePieces, availableMoves);
             return availableMoves;
         }
-        
-        public override void Attack(BaseChessPiece targetPiece) { }
 
         public override void PreMove(BaseChessPiece targetPiece) { }
     }

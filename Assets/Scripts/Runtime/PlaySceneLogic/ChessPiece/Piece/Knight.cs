@@ -19,12 +19,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             }
             return availableMoves;
         }
-
-        public override void Attack(BaseChessPiece targetPiece)
-        {
-            
-        }
-
+        
         public override void PreMove(BaseChessPiece targetPiece)
         {
             

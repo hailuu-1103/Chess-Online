@@ -3,6 +3,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece
     using System.Collections.Generic;
     using DG.Tweening;
     using GameFoundation.Scripts.Utilities.LogService;
+    using GameFoundation.Scripts.Utilities.ObjectPool;
     using UnityEngine;
     using Zenject;
 
@@ -34,8 +35,12 @@ namespace Runtime.PlaySceneLogic.ChessPiece
         }
 
         public virtual void MoveTo(GameObject targetTile) { this.transform.DOMove(targetTile.transform.position, GameStaticValue.MoveDuration); }
-        
-        public abstract void Attack(BaseChessPiece targetPiece);
+
+        public virtual void Attack(BaseChessPiece targetPiece)
+        {
+            this.logService.LogWithColor("Implement attack animation here!", Color.cyan);
+            targetPiece.Recycle();
+        }
         public abstract void PreMove(BaseChessPiece targetPiece);
     }
 }
