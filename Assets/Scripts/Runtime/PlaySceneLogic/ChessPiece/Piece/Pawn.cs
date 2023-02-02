@@ -17,17 +17,16 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             if (runtimePieces[this.row, this.col + direction] == null)
             {
                 availableMoves.Add(new Vector2Int(this.row, this.col + direction));
-            }
-
-            // Two in front
-            switch (this.team)
-            {
-                // White team
-                case PieceTeam.White when this.col == 1 && runtimePieces[this.row, this.col + direction * 2] == null:
-                // Black team
-                case PieceTeam.Black when this.col == 6 && runtimePieces[this.row, this.col + direction * 2] == null:
-                    availableMoves.Add(new Vector2Int(this.row, this.col + direction * 2));
-                    break;
+                // Two in front
+                switch (this.team)
+                {
+                    // White team
+                    case PieceTeam.White when this.col == 1 && runtimePieces[this.row, this.col + direction * 2] == null:
+                    // Black team
+                    case PieceTeam.Black when this.col == 6 && runtimePieces[this.row, this.col + direction * 2] == null:
+                        availableMoves.Add(new Vector2Int(this.row, this.col + direction * 2));
+                        break;
+                }
             }
 
             // Kill move

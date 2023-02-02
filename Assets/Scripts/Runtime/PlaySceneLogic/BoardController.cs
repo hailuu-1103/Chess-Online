@@ -6,6 +6,7 @@ namespace Runtime.PlaySceneLogic
     using Runtime.Input.Signal;
     using Runtime.PlaySceneLogic.ChessPiece;
     using Runtime.PlaySceneLogic.ChessTile;
+    using UniRx;
     using UnityEngine;
     using Zenject;
 
@@ -29,11 +30,12 @@ namespace Runtime.PlaySceneLogic
         public List<BaseChessPiece>            deadWhitePieces = new();
         public List<BaseChessPiece>            deadBlackPieces = new();
         
+        public BoolReactiveProperty isWhiteTurn = new(true);
+
         private List<Vector2Int> availableMoves     = new();
         private Vector2Int       currentlyTileIndex = -Vector2Int.one;
         private Vector2Int       previousTileIndex  = -Vector2Int.one;
         private int              inTurnMoveCount;
-        private bool             isWhiteTurn = true;
 
         [Inject]
         private void OnInit(ILogService logService, TileSpawner tileSpawner, PieceSpawner pieceSpawner, TileHighlighter tileHighlighter, SignalBus signalBus)
@@ -125,7 +127,7 @@ namespace Runtime.PlaySceneLogic
             var currentPiece = this.GetPieceByIndex(currentIndex);
 
             if (currentPiece == null || !this.availableMoves.Contains(targetIndex)) return false;
-            if (this.isWhiteTurn)
+            if (this.isWhiteTurn.Value)
             {
                 if (currentPiece.team == PieceTeam.Black) return false;
             }
@@ -134,7 +136,7 @@ namespace Runtime.PlaySceneLogic
                 if (currentPiece.team == PieceTeam.White) return false;
             }
 
-            this.isWhiteTurn = !this.isWhiteTurn;
+            this.isWhiteTurn.Value = !this.isWhiteTurn.Value;
             return true;
         }
 

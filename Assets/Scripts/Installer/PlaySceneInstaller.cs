@@ -1,10 +1,12 @@
 namespace Installer
 {
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
+    using GameFoundation.Scripts.UIModule.Utilities;
     using Runtime.Input.Signal;
     using Runtime.PlaySceneLogic;
     using Runtime.PlaySceneLogic.ChessPiece;
     using Runtime.PlaySceneLogic.ChessTile;
+    using Runtime.UI;
     using UnityEngine;
     using Zenject;
 
@@ -17,7 +19,7 @@ namespace Installer
             base.InstallBindings();
 
             this.Container.Bind<PlaySceneCamera>().FromInstance(this.playSceneCamera).AsCached();
-            
+
             this.Container.Bind<TileSpawner>().AsCached().NonLazy();
             this.Container.Bind<TileHighlighter>().AsCached().NonLazy();
             this.Container.Bind<PieceSpawner>().AsCached().NonLazy();
@@ -26,6 +28,8 @@ namespace Installer
             this.Container.Bind<BoardController>().FromComponentInHierarchy().AsCached();
 
             this.InitSignal(this.Container);
+            
+            this.Container.InitScreenManually<MainSceneScreenPresenter>();
         }
 
         private void InitSignal(DiContainer diContainer)
