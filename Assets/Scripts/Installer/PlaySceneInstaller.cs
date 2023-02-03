@@ -6,6 +6,7 @@ namespace Installer
     using Runtime.PlaySceneLogic;
     using Runtime.PlaySceneLogic.ChessPiece;
     using Runtime.PlaySceneLogic.ChessTile;
+    using Runtime.PlaySceneLogic.Signal;
     using Runtime.UI;
     using UnityEngine;
     using Zenject;
@@ -36,6 +37,7 @@ namespace Installer
         {
             diContainer.DeclareSignal<OnMouseEnterSignal>();
             diContainer.DeclareSignal<OnMouseReleaseSignal>();
+            diContainer.DeclareSignal<OnCheckSignal>();
         }
     }
 }

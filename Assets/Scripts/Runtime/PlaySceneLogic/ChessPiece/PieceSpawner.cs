@@ -1,6 +1,7 @@
 namespace Runtime.PlaySceneLogic.ChessPiece
 {
     using System;
+    using System.Collections.Generic;
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.AssetLibrary;
     using GameFoundation.Scripts.Utilities.ObjectPool;
@@ -22,7 +23,8 @@ namespace Runtime.PlaySceneLogic.ChessPiece
 
         public async UniTask<BaseChessPiece[,]> SpawnAllPieces(int boardRows, int boardColumn, Transform parent)
         {
-            var pieces = new BaseChessPiece[boardRows, boardColumn];
+            var listTask = new List<UniTask<BaseChessPiece>>();
+            var pieces   = new BaseChessPiece[boardRows, boardColumn];
             for (var i = 0; i < boardRows; i++)
             {
                 for (var j = 0; j < boardColumn; j++)
@@ -48,8 +50,14 @@ namespace Runtime.PlaySceneLogic.ChessPiece
                         };
                     }
 
-                    pieces[j, i] = await this.SpawnSinglePiece(parent, pieceType, pieceTeam, i, j);
+                    listTask.Add(this.SpawnSinglePiece(parent, pieceType, pieceTeam, i, j));
                 }
+            }
+
+            var listBaseChess = await UniTask.WhenAll(listTask);
+            foreach (var baseChess in listBaseChess)
+            {
+                if(baseChess != null) pieces[baseChess.row, baseChess.col] = baseChess;
             }
 
             return pieces;
@@ -60,15 +68,16 @@ namespace Runtime.PlaySceneLogic.ChessPiece
             if (type == PieceType.None) return null;
             var piece = await this.objectPoolManager.Spawn(Enum.GetName(typeof(PieceType), type), parent);
             this.diContainer.InjectGameObject(piece);
-            piece.GetComponent<MeshRenderer>().material = team != PieceTeam.None
-                ? await this.gameAssets.LoadAssetAsync<Material>(Enum.GetName(typeof(PieceTeam), team) + " " + Enum.GetName(typeof(PieceType), type))
-                : null;
+            
             piece.transform.position = new Vector3(y, GameStaticValue.TileOffsetY, x);
             var baseChessPiece = piece.GetComponent<BaseChessPiece>();
             baseChessPiece.row  = y;
             baseChessPiece.col  = x;
             baseChessPiece.type = type;
             baseChessPiece.team = team;
+            piece.GetComponent<MeshRenderer>().material = team != PieceTeam.None
+                ? await this.gameAssets.LoadAssetAsync<Material>(Enum.GetName(typeof(PieceTeam), team) + " " + Enum.GetName(typeof(PieceType), type))
+                : null;
             return baseChessPiece;
         }
     }

@@ -19,6 +19,30 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             return availableMoves;
         }
 
-        public override void PreMove(BaseChessPiece targetPiece) { }
+        public override List<Vector2Int> GetCheckMovesIndex(List<Vector2Int> availableMoves, Vector2Int kingPieceIndex)
+        {
+            var currentPieceIndex = new Vector2Int(this.row, this.col);
+            if (kingPieceIndex.x < this.row && kingPieceIndex.y < this.col)
+            {
+                return this.pieceRegularMoveHelper.GetCheckMovesIndexBotLeftDiagonal(currentPieceIndex, availableMoves, kingPieceIndex);
+            }
+
+            if (kingPieceIndex.x > this.row && kingPieceIndex.y < this.col)
+            {
+                return this.pieceRegularMoveHelper.GetCheckMovesIndexBotRightDiagonal(currentPieceIndex, availableMoves, kingPieceIndex);
+            }
+
+            if (kingPieceIndex.x > this.row && kingPieceIndex.y > this.col)
+            {
+                return this.pieceRegularMoveHelper.GetCheckMovesIndexTopRightDiagonal(currentPieceIndex, availableMoves, kingPieceIndex);
+            }
+
+            if (kingPieceIndex.x < this.row && kingPieceIndex.y > this.col)
+            {
+                return this.pieceRegularMoveHelper.GetCheckMovesIndexTopLeftDiagonal(currentPieceIndex, availableMoves, kingPieceIndex);
+            }
+
+            return null;
+        }
     }
 }

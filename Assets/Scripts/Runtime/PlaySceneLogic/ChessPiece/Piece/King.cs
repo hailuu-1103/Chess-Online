@@ -21,6 +21,9 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             return availableMoves;
         }
 
-        public override void PreMove(BaseChessPiece targetPiece) { }
+        public override List<Vector2Int> GetCheckMovesIndex(List<Vector2Int> availableMoves, Vector2Int kingPieceIndex)
+        {
+            return null;
+        }
     }
 }

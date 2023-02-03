@@ -6,6 +6,94 @@ namespace Runtime.PlaySceneLogic
 
     public class PieceRegularMoveHelper
     {
+        public List<Vector2Int> GetCheckMovesIndexBotRightDiagonal(Vector2Int currentPieceIndex, List<Vector2Int> availableMovesIndex, Vector2Int kingPieceIndex)
+        {
+            if (!availableMovesIndex.Contains(kingPieceIndex)) return null;
+            var checkMovesIndex = new List<Vector2Int>();
+            var distance        = Mathf.Abs(currentPieceIndex.y - kingPieceIndex.y);
+            for (var i = 0; i < distance; i++)
+            {
+                checkMovesIndex.Add(new Vector2Int(currentPieceIndex.x + i, currentPieceIndex.y - i));
+            }
+            return checkMovesIndex;
+        }
+        public List<Vector2Int> GetCheckMovesIndexBotLeftDiagonal(Vector2Int currentPieceIndex, List<Vector2Int> availableMovesIndex, Vector2Int kingPieceIndex)
+        {
+            if (!availableMovesIndex.Contains(kingPieceIndex)) return null;
+            var checkMovesIndex = new List<Vector2Int>();
+            var distance        = Mathf.Abs(currentPieceIndex.y - kingPieceIndex.y);
+            for (var i = 0; i < distance; i++)
+            {
+                checkMovesIndex.Add(new Vector2Int(currentPieceIndex.x - i, currentPieceIndex.y - i));
+            }
+            return checkMovesIndex;
+        }
+        public List<Vector2Int> GetCheckMovesIndexTopRightDiagonal(Vector2Int currentPieceIndex,List<Vector2Int> availableMovesIndex, Vector2Int kingPieceIndex)
+        {
+            if (!availableMovesIndex.Contains(kingPieceIndex)) return null;
+            var checkMovesIndex = new List<Vector2Int>();
+            var distance        = Mathf.Abs(currentPieceIndex.y - kingPieceIndex.y);
+            for (var i = 0; i < distance; i++)
+            {
+                checkMovesIndex.Add(new Vector2Int(currentPieceIndex.x + i, currentPieceIndex.y + i));
+            }
+            return checkMovesIndex;
+        }
+        public List<Vector2Int> GetCheckMovesIndexTopLeftDiagonal(Vector2Int currentPieceIndex, List<Vector2Int> availableMovesIndex, Vector2Int kingPieceIndex)
+        {
+            if (!availableMovesIndex.Contains(kingPieceIndex)) return null;
+            var checkMovesIndex = new List<Vector2Int>();
+            var distance        = Mathf.Abs(currentPieceIndex.y - kingPieceIndex.y);
+            for (var i = 0; i < distance; i++)
+            {
+                checkMovesIndex.Add(new Vector2Int(currentPieceIndex.x - i, currentPieceIndex.y + i));
+            }
+            return checkMovesIndex;
+        }
+        public List<Vector2Int> GetCheckMovesIndexTopColumn(Vector2Int currentPieceIndex, List<Vector2Int> availableMovesIndex, Vector2Int kingPieceIndex)
+        {
+            if (!availableMovesIndex.Contains(kingPieceIndex)) return null;
+            var checkMovesIndex = new List<Vector2Int>();
+            var distance        = Mathf.Abs(currentPieceIndex.y - kingPieceIndex.y);
+            for (var i = 0; i < distance; i++)
+            {
+                checkMovesIndex.Add(new Vector2Int(currentPieceIndex.x, currentPieceIndex.y + i));
+            }
+            return checkMovesIndex;
+        }
+        public List<Vector2Int> GetCheckMovesIndexBotColumn(Vector2Int currentPieceIndex, List<Vector2Int> availableMovesIndex, Vector2Int kingPieceIndex)
+        {
+            if (!availableMovesIndex.Contains(kingPieceIndex)) return null;
+            var checkMovesIndex = new List<Vector2Int>();
+            var distance        = Mathf.Abs(currentPieceIndex.y - kingPieceIndex.y);
+            for (var i = 0; i < distance; i++)
+            {
+                checkMovesIndex.Add(new Vector2Int(currentPieceIndex.x, currentPieceIndex.y - i));
+            }
+            return checkMovesIndex;
+        }
+        public List<Vector2Int> GetCheckMovesIndexLeftRow(Vector2Int currentPieceIndex,List<Vector2Int> availableMovesIndex, Vector2Int kingPieceIndex)
+        {
+            if (!availableMovesIndex.Contains(kingPieceIndex)) return null;
+            var checkMovesIndex = new List<Vector2Int>();
+            var distance        = Mathf.Abs(currentPieceIndex.y - kingPieceIndex.y);
+            for (var i = 0; i < distance; i++)
+            {
+                checkMovesIndex.Add(new Vector2Int(currentPieceIndex.x - i, currentPieceIndex.y));
+            }
+            return checkMovesIndex;
+        }
+        public List<Vector2Int> GetCheckMovesIndexRightRow(Vector2Int currentPieceIndex, List<Vector2Int> availableMovesIndex, Vector2Int kingPieceIndex)
+        {
+            if (!availableMovesIndex.Contains(kingPieceIndex)) return null;
+            var checkMovesIndex = new List<Vector2Int>();
+            var distance        = Mathf.Abs(currentPieceIndex.y - kingPieceIndex.y);
+            for (var i = 0; i < distance; i++)
+            {
+                checkMovesIndex.Add(new Vector2Int(currentPieceIndex.x + i, currentPieceIndex.y));
+            }
+            return checkMovesIndex;
+        }
         public void CheckBotLeftDiagonal(int row, int col, BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
         {
             for (var i = 1; i < GameStaticValue.BoardRows; i++)
@@ -21,7 +109,6 @@ namespace Runtime.PlaySceneLogic
                 availableMoves.Add(new Vector2Int(row - i, col - i));
             }
         }
-        
         public void CheckBotRightDiagonal(int row, int col, BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
         {
             for (var i = 1; i < GameStaticValue.BoardRows; i++)
@@ -37,7 +124,6 @@ namespace Runtime.PlaySceneLogic
                 availableMoves.Add(new Vector2Int(row + i, col - i));
             }
         }
-
         public void CheckTopLeftDiagonal(int row, int col, BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
         {
             for (var i = 1; i < GameStaticValue.BoardRows; i++)
@@ -53,7 +139,6 @@ namespace Runtime.PlaySceneLogic
                 availableMoves.Add(new Vector2Int(row - i, col + i));
             }
         }
-
         public void CheckTopRightDiagonal(int row, int col, BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
         {
             for (var i = 1; i < GameStaticValue.BoardRows; i++)
@@ -69,7 +154,6 @@ namespace Runtime.PlaySceneLogic
                 availableMoves.Add(new Vector2Int(row + i, col + i));
             }
         }
-
         public void CheckRightRow(int row, int col, BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
         {
             for (var i = 1; i < GameStaticValue.BoardRows; i++)
@@ -85,7 +169,6 @@ namespace Runtime.PlaySceneLogic
                 availableMoves.Add(new Vector2Int(row + i, col));
             }
         }
-
         public void CheckLeftRow(int row, int col, BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
         {
             for (var i = 1; i < GameStaticValue.BoardRows; i++)
@@ -101,7 +184,6 @@ namespace Runtime.PlaySceneLogic
                 availableMoves.Add(new Vector2Int(row - i, col));
             }
         }
-
         public void CheckBotColumn(int row, int col, BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
         {
             for (var i = 1; i < GameStaticValue.BoardRows; i++)
@@ -117,7 +199,6 @@ namespace Runtime.PlaySceneLogic
                 availableMoves.Add(new Vector2Int(row, col - i));
             }
         }
-
         public void CheckTopColumn(int row, int col, BaseChessPiece[,] runtimePieces, List<Vector2Int> availableMoves)
         {
             for (var i = 1; i < GameStaticValue.BoardRows; i++)
