@@ -29,10 +29,51 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             return availableMoves;
         }
 
-        public override List<Vector2Int> GetCheckMovesIndex(List<Vector2Int> availableMoves, Vector2Int kingPieceIndex)
+        public override List<Vector2Int> GetCheckMovesIndex(List<Vector2Int> availableMovesIndex, Vector2Int kingPieceIndex)
         {
+            var currentPieceIndex = new Vector2Int(this.row, this.col);
+            if (kingPieceIndex.x < this.row && kingPieceIndex.y < this.col)
+            {
+                return this.pieceRegularMoveHelper.GetCheckMovesIndexBotLeftDiagonal(currentPieceIndex, availableMovesIndex, kingPieceIndex);
+            }
+
+            if (kingPieceIndex.x > this.row && kingPieceIndex.y < this.col)
+            {
+                return this.pieceRegularMoveHelper.GetCheckMovesIndexBotRightDiagonal(currentPieceIndex, availableMovesIndex, kingPieceIndex);
+            }
+
+            if (kingPieceIndex.x > this.row && kingPieceIndex.y > this.col)
+            {
+                return this.pieceRegularMoveHelper.GetCheckMovesIndexTopRightDiagonal(currentPieceIndex, availableMovesIndex, kingPieceIndex);
+            }
+
+            if (kingPieceIndex.x < this.row && kingPieceIndex.y > this.col)
+            {
+                return this.pieceRegularMoveHelper.GetCheckMovesIndexTopLeftDiagonal(currentPieceIndex, availableMovesIndex, kingPieceIndex);
+            }
             
-            return null; // Not check
+            if (kingPieceIndex.x < this.row && kingPieceIndex.y == this.col)
+            {
+                return this.pieceRegularMoveHelper.GetCheckMovesIndexLeftRow(currentPieceIndex, availableMovesIndex, kingPieceIndex);
+            }
+
+            if (kingPieceIndex.x > this.row && kingPieceIndex.y == this.col)
+            {
+                return this.pieceRegularMoveHelper.GetCheckMovesIndexRightRow(currentPieceIndex, availableMovesIndex, kingPieceIndex);
+            }
+
+            if (kingPieceIndex.x == this.row && kingPieceIndex.y > this.col)
+            {
+                return this.pieceRegularMoveHelper.GetCheckMovesIndexTopColumn(currentPieceIndex, availableMovesIndex, kingPieceIndex);
+            }
+
+            if (kingPieceIndex.x == this.row && kingPieceIndex.y < this.col)
+            {
+                return this.pieceRegularMoveHelper.GetCheckMovesIndexTopLeftDiagonal(currentPieceIndex, availableMovesIndex, kingPieceIndex);
+            }
+            
+            return null;
+            
         }
     }
 }

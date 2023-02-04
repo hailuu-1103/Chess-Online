@@ -76,7 +76,7 @@ namespace Runtime.PlaySceneLogic
         {
             if (!availableMovesIndex.Contains(kingPieceIndex)) return null;
             var checkMovesIndex = new List<Vector2Int>();
-            var distance        = Mathf.Abs(currentPieceIndex.y - kingPieceIndex.y);
+            var distance        = Mathf.Abs(currentPieceIndex.x - kingPieceIndex.x);
             for (var i = 0; i < distance; i++)
             {
                 checkMovesIndex.Add(new Vector2Int(currentPieceIndex.x - i, currentPieceIndex.y));
@@ -87,7 +87,7 @@ namespace Runtime.PlaySceneLogic
         {
             if (!availableMovesIndex.Contains(kingPieceIndex)) return null;
             var checkMovesIndex = new List<Vector2Int>();
-            var distance        = Mathf.Abs(currentPieceIndex.y - kingPieceIndex.y);
+            var distance        = Mathf.Abs(currentPieceIndex.x - kingPieceIndex.x);
             for (var i = 0; i < distance; i++)
             {
                 checkMovesIndex.Add(new Vector2Int(currentPieceIndex.x + i, currentPieceIndex.y));
