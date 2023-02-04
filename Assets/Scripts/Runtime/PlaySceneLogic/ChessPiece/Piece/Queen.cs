@@ -69,7 +69,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
 
             if (kingPieceIndex.x == this.row && kingPieceIndex.y < this.col)
             {
-                return this.pieceRegularMoveHelper.GetCheckMovesIndexTopLeftDiagonal(currentPieceIndex, availableMovesIndex, kingPieceIndex);
+                return this.pieceRegularMoveHelper.GetCheckMovesIndexBotColumn(currentPieceIndex, availableMovesIndex, kingPieceIndex);
             }
             
             return null;

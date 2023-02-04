@@ -10,7 +10,6 @@ namespace Runtime.PlaySceneLogic
     using Ultility;
     using UniRx;
     using UnityEngine;
-    using UnityEngine.Serialization;
     using Zenject;
 
     public class BoardController : MonoBehaviour
@@ -129,8 +128,8 @@ namespace Runtime.PlaySceneLogic
             this.logService.LogWithColor($"Check count: {this.onCheckMovesIndex.Count}", Color.green);
             this.logService.LogWithColor($"Exist: {ListExtensions.AllElementsNotExistInList(this.pieceAvailableMovesIndex, this.onCheckMovesIndex)}");
             this.logService.LogWithColor($"Can move: {canMove}", Color.green);
-            //If check
-            if(this.onCheckMovesIndex.Count > 0 && !this.onCheckMovesIndex.Contains(targetIndex) && currentPiece.type == PieceType.King) return false;
+            // //If check
+            if(this.onCheckMovesIndex.Count > 0 && !this.onCheckMovesIndex.Contains(targetIndex) && currentPiece.type != PieceType.King) return false;
             
             if (currentPiece == null || !this.pieceAvailableMovesIndex.Contains(targetIndex)) return false;
             if (this.isWhiteTurn.Value)
