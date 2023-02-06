@@ -112,6 +112,10 @@ namespace Runtime.PlaySceneLogic
                 this.runtimePieces[this.currentlyTileIndex.x, this.currentlyTileIndex.y] = this.GetPieceByIndex(this.previousTileIndex);
                 this.runtimePieces[this.previousTileIndex.x, this.previousTileIndex.y]   = null;
             }
+            else
+            {
+                this.logService.LogWithColor("Play error move sound here.", Color.yellow);
+            }
 
             if (this.inTurnMoveCount != 2) return;
             this.inTurnMoveCount = 0;
@@ -124,11 +128,7 @@ namespace Runtime.PlaySceneLogic
         private bool IsValidMove(Vector2Int currentIndex, Vector2Int targetIndex)
         {
             var currentPiece = this.GetPieceByIndex(currentIndex);
-            var canMove      = this.onCheckMovesIndex.Count > 0 && ListExtensions.AllElementsNotExistInList(this.pieceAvailableMovesIndex, this.onCheckMovesIndex);
-            this.logService.LogWithColor($"Check count: {this.onCheckMovesIndex.Count}", Color.green);
-            this.logService.LogWithColor($"Exist: {ListExtensions.AllElementsNotExistInList(this.pieceAvailableMovesIndex, this.onCheckMovesIndex)}");
-            this.logService.LogWithColor($"Can move: {canMove}", Color.green);
-            // //If check
+            //If check
             if(this.onCheckMovesIndex.Count > 0 && !this.onCheckMovesIndex.Contains(targetIndex) && currentPiece.type != PieceType.King) return false;
             
             if (currentPiece == null || !this.pieceAvailableMovesIndex.Contains(targetIndex)) return false;

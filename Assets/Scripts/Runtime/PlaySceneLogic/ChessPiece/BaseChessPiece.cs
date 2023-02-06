@@ -41,6 +41,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece
         public virtual void MoveTo(BaseChessPiece currentPiece, GameObject targetTile)
         {
             this.transform.DOMove(targetTile.transform.position, GameStaticValue.MoveDuration);
+            this.logService.LogWithColor("Play move sound here", Color.yellow);
             var targetTileIndex       = this.boardController.GetTileIndex(targetTile);
             currentPiece.ReplaceData(targetTileIndex.x,targetTileIndex.y);
             var availableMoves = currentPiece.GetAvailableMoves();
@@ -54,6 +55,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece
                 {
                     this.signalBus.Fire(new OnCheckSignal(currentPiece, checkMovesIndex));
                     this.logService.LogWithColor("Check!", Color.red);
+                    this.logService.LogWithColor("Play check sound here!", Color.yellow);
                 }
                 this.logService.LogWithColor($"Black king index: {blackKingIndex}", Color.red);
             }
@@ -65,12 +67,16 @@ namespace Runtime.PlaySceneLogic.ChessPiece
                 {
                     this.signalBus.Fire(new OnCheckSignal(currentPiece, checkMovesIndex));
                     this.logService.LogWithColor("Check!", Color.red);
+                    this.logService.LogWithColor("Play check sound here!", Color.yellow);
                 }
                 this.logService.LogWithColor($"White king index: {whiteKingIndex}", Color.red);
             }
             var targetPiece    = this.boardController.GetPieceByIndex(this.boardController.GetTileIndex(targetTile));
+            
+            // Kill move
             if (targetPiece != null)
             {
+                this.logService.LogWithColor("Play kill sound here", Color.yellow);
                 targetPiece.Recycle();
             }
         }
