@@ -1,6 +1,5 @@
 namespace Runtime.Input
 {
-    using System;
     using Runtime.Input.Signal;
     using Runtime.PlaySceneLogic;
     using UnityEngine;
@@ -26,10 +25,10 @@ namespace Runtime.Input
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            var ray = this.playSceneCamera.GetRayScreenPoint(Input.mousePosition);
+            if (Physics.Raycast(ray, out var hitInfo, 100, LayerMask.GetMask("Tile")))
             {
-                var        ray = this.playSceneCamera.GetRayScreenPoint(Input.mousePosition);
-                if (Physics.Raycast(ray, out var hitInfo, 100, LayerMask.GetMask("Tile")))
+                if (Input.GetMouseButtonDown(0))
                 {
                     this.signalBus.Fire(new OnMouseEnterSignal(this.boardController.GetTileIndex(hitInfo.transform.gameObject)));
                 }

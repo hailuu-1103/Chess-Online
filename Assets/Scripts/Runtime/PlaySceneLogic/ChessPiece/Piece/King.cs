@@ -7,7 +7,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
     {
         private readonly int[,] moves = { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, 1 }, { -1, 0 }, { -1, -1 } };
 
-        public override List<Vector2Int> GetAvailableMoves()
+        public override List<Vector2Int> GetAvailableMoves(BaseChessPiece[,] chessboard)
         {
             var availableMoves = new List<Vector2Int>();
             for (var i = 0; i < 8; i++)
@@ -21,7 +21,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             return availableMoves;
         }
 
-        public override List<Vector2Int> GetCheckMovesIndex(List<Vector2Int> availableMoves, Vector2Int kingPieceIndex)
+        public override List<Vector2Int> GetCheckMovesIndex(Vector2Int currentPieceIndex, List<Vector2Int> availableMoves, Vector2Int kingPieceIndex)
         {
             return null;
         }

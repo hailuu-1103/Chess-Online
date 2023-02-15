@@ -6,9 +6,8 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
     public class Knight : BaseChessPiece
     {
         private readonly int[,] moves = {{2,1}, {1,2}, {-1,2}, {-2,1}, {-2,-1}, {-1,-2}, {1,-2}, {2,-1}};
-        public override List<Vector2Int> GetAvailableMoves()
+        public override List<Vector2Int> GetAvailableMoves(BaseChessPiece[,] chessboard)
         {
-            var runtimePieces  = this.boardController.runtimePieces;
             var availableMoves = new List<Vector2Int>();
             for (var i = 0; i < GameStaticValue.BoardRows; i++)
             {
@@ -20,9 +19,12 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             return availableMoves;
         }
 
-        public override List<Vector2Int> GetCheckMovesIndex(List<Vector2Int> availableMoves, Vector2Int kingPieceIndex)
+        public override List<Vector2Int> GetCheckMovesIndex(Vector2Int currentPieceIndex, List<Vector2Int> availableMoves, Vector2Int kingPieceIndex)
         {
-            return null;
+            var checkMovesIndex   = new List<Vector2Int>();
+            if (!availableMoves.Contains(kingPieceIndex)) return null;
+            checkMovesIndex.Add(new Vector2Int(this.row, this.col));
+            return checkMovesIndex;
         }
     }
 }
