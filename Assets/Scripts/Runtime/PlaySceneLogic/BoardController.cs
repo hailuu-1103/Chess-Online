@@ -11,6 +11,13 @@ namespace Runtime.PlaySceneLogic
     using UnityEngine;
     using Zenject;
 
+    public enum SpecialMoveType
+    {
+        None,
+        Castling = 1,
+        EnPassant = 2,
+        Promotion = 3
+    }
     public class BoardController : MonoBehaviour
     {
         #region inject
@@ -30,12 +37,14 @@ namespace Runtime.PlaySceneLogic
         public BaseChessPiece[,] RuntimePieces = new BaseChessPiece[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
 
         public BoolReactiveProperty isWhiteTurn = new(true);
+        public List<Vector2Int[]>   MoveList    = new();
 
         private List<Vector2Int> pieceAvailableMovesIndex = new();
-        private Vector2Int       currentlyTileIndex       = -Vector2Int.one;
-        private Vector2Int       previousTileIndex        = -Vector2Int.one;
+        private SpecialMoveType  specialMoveType;
+        private Vector2Int       currentlyTileIndex = -Vector2Int.one;
+        private Vector2Int       previousTileIndex  = -Vector2Int.one;
         private int              inTurnMoveCount;
-
+        
         [Inject]
         private void OnInit(ILogService logger, TileSpawnerService tileSpawner, PieceSpawnerService pieceSpawner, TileHighlighterService tileHighlighter, SignalBus signal)
         {
@@ -85,10 +94,18 @@ namespace Runtime.PlaySceneLogic
             {
                 var currentPiece = this.GetPieceByIndex(this.previousTileIndex);
                 var targetTile   = this.GetTileByIndex(this.currentlyTileIndex);
+                this.specialMoveType = currentPiece.GetSpecialMoveType(currentPiece, ref this.pieceAvailableMovesIndex, this.currentlyTileIndex);
                 this.SimulateMoveForPiece(currentPiece, this.currentlyTileIndex);
                 if (this.pieceAvailableMovesIndex.Contains(this.currentlyTileIndex))
                 {
-                    currentPiece.MoveTo(currentPiece, targetTile);
+                    if (this.specialMoveType != SpecialMoveType.None)
+                    {
+                        currentPiece.PerformSpecialMove();
+                    }
+                    else
+                    {
+                        currentPiece.PerformNormalMove(this.previousTileIndex, targetTile);
+                    }
                     var opponentTeam = currentPiece.team == PieceTeam.White ? PieceTeam.Black : PieceTeam.White;
                     this.RuntimePieces[this.currentlyTileIndex.x, this.currentlyTileIndex.y] = this.GetPieceByIndex(this.previousTileIndex);
                     this.RuntimePieces[this.previousTileIndex.x, this.previousTileIndex.y]   = null;
@@ -167,6 +184,10 @@ namespace Runtime.PlaySceneLogic
             return true;
         }
 
+        #region special moves
+        
+
+        #endregion
         #region ultility
 
         public bool DetectCheck(PieceTeam opponentTeam)

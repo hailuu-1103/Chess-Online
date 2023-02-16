@@ -1,11 +1,11 @@
 namespace Runtime.PlaySceneLogic.ChessPiece
 {
+    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using DG.Tweening;
     using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Scripts.Utilities.ObjectPool;
-    using Runtime.PlaySceneLogic.Signal;
+    using Runtime.PlaySceneLogic.SpecialMoves;
     using UnityEngine;
     using Zenject;
 
@@ -20,36 +20,51 @@ namespace Runtime.PlaySceneLogic.ChessPiece
         protected BoardController        boardController;
         protected PieceRegularMoveHelper pieceRegularMoveHelper;
         protected ILogService            logService;
-        
+        protected ISpecialMoves          specialMoves;
+
         [Inject]
-        private void Init(SignalBus signal, BoardController controller, ILogService service, PieceRegularMoveHelper helper)
+        private void Init(SignalBus signal, BoardController controller, ILogService service, ISpecialMoves special, PieceRegularMoveHelper helper)
         {
             this.signalBus              = signal;
             this.boardController        = controller;
             this.logService             = service;
             this.pieceRegularMoveHelper = helper;
+            this.specialMoves           = special;
+            this.OnInit();
         }
 
+        public virtual void OnInit(){}
         public abstract List<Vector2Int> GetAvailableMoves(BaseChessPiece[,] chessboard);
         public abstract List<Vector2Int> GetCheckMovesIndex(Vector2Int currentPieceIndex, List<Vector2Int> availableMoves, Vector2Int kingPieceIndex);
+
         public virtual void ReplaceData(int row, int col)
         {
             this.row = row;
             this.col = col;
         }
 
-        public virtual void MoveTo(BaseChessPiece currentPiece, GameObject targetTile)
+        public virtual void PerformNormalMove(Vector2Int currentPieceIndex, GameObject targetTile)
         {
             this.transform.DOMove(targetTile.transform.position, GameStaticValue.MoveDuration);
             this.logService.LogWithColor("Play move sound here", Color.yellow);
-            var targetPiece    = this.boardController.GetPieceByIndex(this.boardController.GetTileIndex(targetTile));
-            
+            var targetPiece = this.boardController.GetPieceByIndex(this.boardController.GetTileIndex(targetTile));
+
             // Kill move
             if (targetPiece != null)
             {
                 this.logService.LogWithColor("Play kill sound here", Color.yellow);
                 targetPiece.Recycle();
             }
+
+            this.boardController.MoveList.Add(new[]
+                { new Vector2Int(currentPieceIndex.x, currentPieceIndex.y), new Vector2Int(this.boardController.GetTileIndex(targetTile).x, this.boardController.GetTileIndex(targetTile).y) });
+        }
+
+        public virtual SpecialMoveType GetSpecialMoveType(BaseChessPiece currentPiece, ref List<Vector2Int> availableMoves, Vector2Int targetTileIndex) { return SpecialMoveType.None; }
+
+        public virtual void PerformSpecialMove()
+        {
+            this.specialMoves.Execute();
         }
     }
 }

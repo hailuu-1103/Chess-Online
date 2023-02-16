@@ -7,6 +7,7 @@ namespace Installer
     using Runtime.PlaySceneLogic.ChessPiece;
     using Runtime.PlaySceneLogic.ChessTile;
     using Runtime.PlaySceneLogic.Signal;
+    using Runtime.PlaySceneLogic.SpecialMoves;
     using Runtime.UI;
     using UnityEngine;
     using Zenject;
@@ -27,7 +28,9 @@ namespace Installer
             this.Container.Bind<PieceRegularMoveHelper>().AsCached().NonLazy();
             
             this.Container.Bind<BoardController>().FromComponentInHierarchy().AsCached();
-
+            this.Container.Rebind<ISpecialMoves>().To<CastlingMove>().AsSingle();
+            this.Container.Rebind<ISpecialMoves>().To<EnPassantMove>().AsSingle();
+            this.Container.Rebind<ISpecialMoves>().To<PromotionMove>().AsSingle();
             this.InitSignal(this.Container);
             
             this.Container.InitScreenManually<MainSceneScreenPresenter>();

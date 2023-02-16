@@ -1,7 +1,6 @@
 namespace Runtime.PlaySceneLogic.ChessPiece.Piece
 {
     using System.Collections.Generic;
-    using GameFoundation.Scripts.Utilities.ObjectPool;
     using UnityEngine;
 
     public class Pawn : BaseChessPiece
