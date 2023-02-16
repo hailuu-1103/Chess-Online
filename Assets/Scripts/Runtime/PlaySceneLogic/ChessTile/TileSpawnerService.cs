@@ -5,12 +5,12 @@ namespace Runtime.PlaySceneLogic.ChessTile
     using GameFoundation.Scripts.Utilities.ObjectPool;
     using UnityEngine;
 
-    public class TileSpawner
+    public class TileSpawnerService
     {
         private readonly IGameAssets       gameAssets;
         private readonly ObjectPoolManager objectPoolManager;
 
-        public TileSpawner(IGameAssets gameAssets, ObjectPoolManager objectPoolManager)
+        public TileSpawnerService(IGameAssets gameAssets, ObjectPoolManager objectPoolManager)
         {
             this.gameAssets        = gameAssets;
             this.objectPoolManager = objectPoolManager;

@@ -5,7 +5,6 @@ namespace Runtime.PlaySceneLogic
     using GameFoundation.Scripts.Utilities.LogService;
     using Runtime.Input.Signal;
     using Runtime.PlaySceneLogic.ChessPiece;
-    using Runtime.PlaySceneLogic.ChessPiece.Piece;
     using Runtime.PlaySceneLogic.ChessTile;
     using Ultility;
     using UniRx;
@@ -16,19 +15,19 @@ namespace Runtime.PlaySceneLogic
     {
         #region inject
 
-        private ILogService     logService;
-        private TileSpawner     tileSpawner;
-        private TileHighlighter tileHighlighter;
-        private PieceSpawner    pieceSpawner;
-        private SignalBus       signalBus;
+        private ILogService            logService;
+        private TileSpawnerService     tileSpawnerService;
+        private TileHighlighterService tileHighlighterService;
+        private PieceSpawnerService    pieceSpawnerService;
+        private SignalBus              signalBus;
 
         #endregion
 
         [SerializeField] private Transform tileHolder;
         [SerializeField] private Transform pieceHolder;
 
-        public GameObject[,]     runtimeTiles  = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
-        public BaseChessPiece[,] runtimePieces = new BaseChessPiece[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
+        public GameObject[,]     RuntimeTiles  = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
+        public BaseChessPiece[,] RuntimePieces = new BaseChessPiece[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
 
         public BoolReactiveProperty isWhiteTurn = new(true);
 
@@ -38,13 +37,13 @@ namespace Runtime.PlaySceneLogic
         private int              inTurnMoveCount;
 
         [Inject]
-        private void OnInit(ILogService logService, TileSpawner tileSpawner, PieceSpawner pieceSpawner, TileHighlighter tileHighlighter, SignalBus signalBus)
+        private void OnInit(ILogService logger, TileSpawnerService tileSpawner, PieceSpawnerService pieceSpawner, TileHighlighterService tileHighlighter, SignalBus signal)
         {
-            this.logService      = logService;
-            this.tileSpawner     = tileSpawner;
-            this.tileHighlighter = tileHighlighter;
-            this.pieceSpawner    = pieceSpawner;
-            this.signalBus       = signalBus;
+            this.logService             = logger;
+            this.tileSpawnerService     = tileSpawner;
+            this.tileHighlighterService = tileHighlighter;
+            this.pieceSpawnerService    = pieceSpawner;
+            this.signalBus              = signal;
         }
 
         private void OnEnable() { this.signalBus.Subscribe<OnMouseEnterSignal>(this.MovePiece); }
@@ -53,8 +52,8 @@ namespace Runtime.PlaySceneLogic
 
         private async void Start()
         {
-            this.runtimeTiles  = await this.tileSpawner.GenerateAllTiles(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.tileHolder);
-            this.runtimePieces = await this.pieceSpawner.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder);
+            this.RuntimeTiles  = await this.tileSpawnerService.GenerateAllTiles(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.tileHolder);
+            this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder);
         }
 
         private void MovePiece(OnMouseEnterSignal signal)
@@ -64,10 +63,10 @@ namespace Runtime.PlaySceneLogic
             {
                 var currentPiece = this.GetPieceByIndex(signal.CurrentTileIndex);
                 if (this.inTurnMoveCount != 1)
-                    this.pieceAvailableMovesIndex = currentPiece.GetAvailableMoves(this.runtimePieces);
-                this.tileHighlighter.HighlightAvailableMoveTiles(this.pieceAvailableMovesIndex.Select(this.GetTileByIndex).ToList());
+                    this.pieceAvailableMovesIndex = currentPiece.GetAvailableMoves(this.RuntimePieces);
+                this.tileHighlighterService.HighlightAvailableMoveTiles(this.pieceAvailableMovesIndex.Select(this.GetTileByIndex).ToList());
                 var preMoveTile = this.GetPreMoveTiles(currentPiece);
-                if (preMoveTile.Count > 0) this.tileHighlighter.HighlightPreMoveTiles(preMoveTile);
+                if (preMoveTile.Count > 0) this.tileHighlighterService.HighlightPreMoveTiles(preMoveTile);
             }
 
             this.previousTileIndex =  this.currentlyTileIndex;
@@ -81,7 +80,7 @@ namespace Runtime.PlaySceneLogic
             }
 
             this.currentlyTileIndex = signal.CurrentTileIndex;
-            this.tileHighlighter.RemoveHighlightTiles(this.pieceAvailableMovesIndex.Select(this.GetTileByIndex).ToArray());
+            this.tileHighlighterService.RemoveHighlightTiles(this.pieceAvailableMovesIndex.Select(this.GetTileByIndex).ToArray());
             if (this.IsTurnMove(this.previousTileIndex))
             {
                 var currentPiece = this.GetPieceByIndex(this.previousTileIndex);
@@ -90,9 +89,15 @@ namespace Runtime.PlaySceneLogic
                 if (this.pieceAvailableMovesIndex.Contains(this.currentlyTileIndex))
                 {
                     currentPiece.MoveTo(currentPiece, targetTile);
-                    this.runtimePieces[this.currentlyTileIndex.x, this.currentlyTileIndex.y] = this.GetPieceByIndex(this.previousTileIndex);
-                    this.runtimePieces[this.previousTileIndex.x, this.previousTileIndex.y]   = null;
-                    this.isWhiteTurn.Value                                                   = !this.isWhiteTurn.Value;
+                    var opponentTeam = currentPiece.team == PieceTeam.White ? PieceTeam.Black : PieceTeam.White;
+                    this.RuntimePieces[this.currentlyTileIndex.x, this.currentlyTileIndex.y] = this.GetPieceByIndex(this.previousTileIndex);
+                    this.RuntimePieces[this.previousTileIndex.x, this.previousTileIndex.y]   = null;
+                    if (this.DetectCheckmate(opponentTeam))
+                    {
+                        this.logService.LogWithColor("Check mate! ", Color.red);
+                    }
+
+                    this.isWhiteTurn.Value = !this.isWhiteTurn.Value;
                 }
                 else
                 {
@@ -114,7 +119,7 @@ namespace Runtime.PlaySceneLogic
 
         private void SimulateMoveForPiece(BaseChessPiece chessPiece, Vector2Int targetTileIndex)
         {
-            var simulateBoard    = (BaseChessPiece[,])this.runtimePieces.Clone();
+            var simulateBoard    = (BaseChessPiece[,])this.RuntimePieces.Clone();
             var actualPieceIndex = new Vector2Int(chessPiece.row, chessPiece.col);
             simulateBoard[targetTileIndex.x, targetTileIndex.y] = chessPiece;
             simulateBoard[chessPiece.row, chessPiece.col]       = null;
@@ -123,26 +128,17 @@ namespace Runtime.PlaySceneLogic
             var movesToRemove           = new List<Vector2Int>();
             var kingTeam                = chessPiece.team;
             var targetKingIndex         = this.GetPieceIndex(kingTeam, PieceType.King);
-            var simulateAttackingPieces = this.GetAllPiecesInBoard(simulateBoard, kingTeam);
+            var simulateAttackingPieces = this.GetAllOpponentPiecesInBoard(simulateBoard, kingTeam);
             var simulationMoves         = new List<Vector2Int>();
-            foreach (var attackingPiece in simulateAttackingPieces)
+            foreach (var checkMovesIndex in from attackingPiece in simulateAttackingPieces let attackingPieceIndex = new Vector2Int(attackingPiece.row, attackingPiece.col) let pieceAvailableMoves = attackingPiece.GetAvailableMoves(simulateBoard) select attackingPiece.GetCheckMovesIndex(attackingPieceIndex, pieceAvailableMoves, targetKingIndex) into checkMovesIndex where checkMovesIndex != null select checkMovesIndex)
             {
-                var attackingPieceIndex = new Vector2Int(attackingPiece.row, attackingPiece.col);
-                var pieceAvailableMoves = attackingPiece.GetAvailableMoves(simulateBoard);
-                var checkMovesIndex     = attackingPiece.GetCheckMovesIndex(attackingPieceIndex, pieceAvailableMoves, targetKingIndex);
-                if (checkMovesIndex != null)
-                {
-                    simulationMoves.AddRange(checkMovesIndex);
-                }
+                simulationMoves.AddRange(checkMovesIndex);
             }
 
             if (simulationMoves.Count > 0)
             {
                 var moveToRemove = ListExtensions.GetIntersectList(simulationMoves, this.pieceAvailableMovesIndex);
-                foreach (var pieceMoveIndex in this.pieceAvailableMovesIndex)
-                {
-                    if (!moveToRemove.Contains(pieceMoveIndex)) movesToRemove.Add(pieceMoveIndex);
-                }
+                movesToRemove.AddRange(this.pieceAvailableMovesIndex.Where(pieceMoveIndex => !moveToRemove.Contains(pieceMoveIndex)));
 
                 chessPiece.row = actualPieceIndex.x;
                 chessPiece.col = actualPieceIndex.y;
@@ -151,92 +147,6 @@ namespace Runtime.PlaySceneLogic
             foreach (var move in movesToRemove)
             {
                 this.pieceAvailableMovesIndex.Remove(move);
-            }
-        }
-
-        private List<BaseChessPiece> GetAllPiecesInBoard(BaseChessPiece[,] board, PieceTeam pieceTeam)
-        {
-            var pieces = new List<BaseChessPiece>();
-            for (var i = 0; i < GameStaticValue.BoardRows; i++)
-            {
-                for (var j = 0; j < GameStaticValue.BoardColumn; j++)
-                {
-                    if (board[i, j] != null && board[i, j].team != pieceTeam)
-                    {
-                        pieces.Add(board[i, j]);
-                    }
-                }
-            }
-
-            return pieces;
-        }
-
-        private void SimulateMoveForSinglePiece(BaseChessPiece chessPiece, ref List<Vector2Int> availableMoves, Vector2Int targetKingIndex)
-        {
-            var actualX       = chessPiece.row;
-            var actualY       = chessPiece.col;
-            var movesToRemove = new List<Vector2Int>();
-
-            for (var i = 0; i < availableMoves.Count; i++)
-            {
-                var simulateX = availableMoves[i].x;
-                var simulateY = availableMoves[i].y;
-
-                var kingIndexOnSimulation = new Vector2Int(targetKingIndex.x, targetKingIndex.y);
-                if (chessPiece.type == PieceType.King)
-                {
-                    kingIndexOnSimulation = new Vector2Int(simulateX, simulateY);
-                }
-
-                var boardSimulation           = new BaseChessPiece[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
-                var attackingPiecesSimulation = new List<BaseChessPiece>();
-
-                for (var x = 0; x < GameStaticValue.BoardRows; x++)
-                {
-                    for (var y = 0; y < GameStaticValue.BoardColumn; y++)
-                    {
-                        if (this.runtimePieces[x, y] == null) continue;
-                        boardSimulation[x, y] = this.runtimePieces[x, y];
-                        if (boardSimulation[x, y].team != chessPiece.team)
-                        {
-                            attackingPiecesSimulation.Add(boardSimulation[x, y]);
-                        }
-                    }
-                }
-
-                boardSimulation[actualX, actualY]     = null;
-                chessPiece.row                        = simulateX;
-                chessPiece.col                        = simulateY;
-                boardSimulation[simulateX, simulateX] = chessPiece;
-
-                var deadPiece = attackingPiecesSimulation.Find(piece => piece.row == simulateX && piece.col == simulateY);
-                if (deadPiece != null)
-                {
-                    attackingPiecesSimulation.Remove(deadPiece);
-                }
-
-                var simulationMoves = new List<Vector2Int>();
-                for (var j = 0; j < attackingPiecesSimulation.Count; j++)
-                {
-                    var pieceMovesIndex = attackingPiecesSimulation[i].GetAvailableMoves(boardSimulation);
-                    for (var k = 0; k < pieceMovesIndex.Count; k++)
-                    {
-                        simulationMoves.Add(pieceMovesIndex[k]);
-                    }
-                }
-
-                if (simulationMoves.Contains(kingIndexOnSimulation))
-                {
-                    movesToRemove.Add(availableMoves[i]);
-                }
-
-                chessPiece.row = actualX;
-                chessPiece.col = actualY;
-            }
-
-            foreach (var move in movesToRemove)
-            {
-                availableMoves.Remove(move);
             }
         }
 
@@ -257,11 +167,82 @@ namespace Runtime.PlaySceneLogic
             return true;
         }
 
-        public BaseChessPiece GetPieceByIndex(Vector2Int pieceIndex) => this.runtimePieces[pieceIndex.x, pieceIndex.y];
+        #region ultility
+
+        public bool DetectCheck(PieceTeam opponentTeam)
+        {
+            var targetKingIndex    = this.GetPieceIndex(opponentTeam, PieceType.King);
+            var isCheck            = false;
+            var attackingPieceTeam = opponentTeam == PieceTeam.White ? PieceTeam.Black : PieceTeam.White;
+            foreach (var attackingPiece in this.RuntimePieces)
+            {
+                if (attackingPiece == null || attackingPiece.team != attackingPieceTeam) continue;
+                var checkMovesIndex = attackingPiece.GetCheckMovesIndex(new Vector2Int(attackingPiece.row, attackingPiece.col), attackingPiece.GetAvailableMoves(this.RuntimePieces),
+                    targetKingIndex);
+                if (checkMovesIndex != null)
+                {
+                    isCheck = true;
+                }
+            }
+
+            return isCheck;
+        }
+
+        public bool DetectCheckmate(PieceTeam opponentTeam)
+        {
+            if (!this.DetectCheck(opponentTeam)) return false;
+            this.logService.LogWithColor("Play check sound here!", Color.yellow);
+            var kingAvailableMoves = new List<Vector2Int>();
+            var checkMovesIndex    = new List<Vector2Int>();
+            var attackingPieces    = this.GetAllOpponentPiecesInBoard(this.RuntimePieces, opponentTeam);
+            var movesToRemove      = new List<Vector2Int>();
+            foreach (var piece in this.RuntimePieces)
+            {
+                if (piece == null || piece.team != opponentTeam || piece.type != PieceType.King) continue;
+                kingAvailableMoves = piece.GetAvailableMoves(this.RuntimePieces);
+                movesToRemove.AddRange(from availableMove in kingAvailableMoves
+                    let pieceInKingMove = this.GetPieceByIndex(availableMove)
+                    where pieceInKingMove != null && pieceInKingMove.team == piece.team
+                    select availableMove);
+            }
+
+            foreach (var checkMoveIndex in from attackingPiece in attackingPieces let attackingPieceIndex = new Vector2Int(attackingPiece.row, attackingPiece.col) let pieceAvailableMoves = attackingPiece.GetAvailableMoves(this.RuntimePieces) select attackingPiece.GetCheckMovesIndex(attackingPieceIndex, pieceAvailableMoves, this.GetPieceIndex(opponentTeam, PieceType.King)) into checkMoveIndex where checkMoveIndex != null select checkMoveIndex)
+            {
+                checkMovesIndex.AddRange(checkMoveIndex);
+            }
+
+            movesToRemove.AddRange(checkMovesIndex.Where(checkMoveIndex => kingAvailableMoves.Contains(checkMoveIndex)));
+
+            foreach (var move in movesToRemove)
+            {
+                kingAvailableMoves.Remove(move);
+            }
+
+            return kingAvailableMoves.Count == 0;
+        }
+
+        private List<BaseChessPiece> GetAllOpponentPiecesInBoard(BaseChessPiece[,] board, PieceTeam currentTeam)
+        {
+            var pieces = new List<BaseChessPiece>();
+            for (var i = 0; i < GameStaticValue.BoardRows; i++)
+            {
+                for (var j = 0; j < GameStaticValue.BoardColumn; j++)
+                {
+                    if (board[i, j] != null && board[i, j].team != currentTeam)
+                    {
+                        pieces.Add(board[i, j]);
+                    }
+                }
+            }
+
+            return pieces;
+        }
+
+        public BaseChessPiece GetPieceByIndex(Vector2Int pieceIndex) => this.RuntimePieces[pieceIndex.x, pieceIndex.y];
 
         public Vector2Int GetPieceIndex(PieceTeam pieceTeam, PieceType pieceType)
         {
-            foreach (var piece in this.runtimePieces)
+            foreach (var piece in this.RuntimePieces)
             {
                 if (piece != null && piece.team == pieceTeam && piece.type == pieceType) return this.GetTileIndex(this.GetTileByIndex(new Vector2Int(piece.row, piece.col)));
             }
@@ -269,7 +250,7 @@ namespace Runtime.PlaySceneLogic
             return -Vector2Int.one; // Not found
         }
 
-        private List<GameObject> GetPreMoveTiles(BaseChessPiece currentPiece)
+        public List<GameObject> GetPreMoveTiles(BaseChessPiece currentPiece)
         {
             var preMoveTile = new List<GameObject>();
             foreach (var tileIndex in from tileIndex in this.pieceAvailableMovesIndex
@@ -283,7 +264,7 @@ namespace Runtime.PlaySceneLogic
             return preMoveTile;
         }
 
-        public GameObject GetTileByIndex(Vector2Int tileIndex) => this.runtimeTiles[tileIndex.x, tileIndex.y];
+        public GameObject GetTileByIndex(Vector2Int tileIndex) => this.RuntimeTiles[tileIndex.x, tileIndex.y];
 
         public Vector2Int GetTileIndex(GameObject tileObj)
         {
@@ -291,7 +272,7 @@ namespace Runtime.PlaySceneLogic
             {
                 for (var j = 0; j < GameStaticValue.BoardColumn; j++)
                 {
-                    if (this.runtimeTiles[i, j].Equals(tileObj))
+                    if (this.RuntimeTiles[i, j].Equals(tileObj))
                     {
                         return new Vector2Int(i, j);
                     }
@@ -300,5 +281,7 @@ namespace Runtime.PlaySceneLogic
 
             return -Vector2Int.one;
         }
+
+        #endregion
     }
 }

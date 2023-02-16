@@ -21,9 +21,9 @@ namespace Installer
 
             this.Container.Bind<PlaySceneCamera>().FromInstance(this.playSceneCamera).AsCached();
 
-            this.Container.Bind<TileSpawner>().AsCached().NonLazy();
-            this.Container.Bind<TileHighlighter>().AsCached().NonLazy();
-            this.Container.Bind<PieceSpawner>().AsCached().NonLazy();
+            this.Container.Bind<TileSpawnerService>().AsCached().NonLazy();
+            this.Container.Bind<TileHighlighterService>().AsCached().NonLazy();
+            this.Container.Bind<PieceSpawnerService>().AsCached().NonLazy();
             this.Container.Bind<PieceRegularMoveHelper>().AsCached().NonLazy();
             
             this.Container.Bind<BoardController>().FromComponentInHierarchy().AsCached();

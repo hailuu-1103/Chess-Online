@@ -8,13 +8,13 @@ namespace Runtime.PlaySceneLogic.ChessPiece
     using UnityEngine;
     using Zenject;
 
-    public class PieceSpawner
+    public class PieceSpawnerService
     {
         private readonly IGameAssets       gameAssets;
         private readonly ObjectPoolManager objectPoolManager;
         private readonly DiContainer       diContainer;
 
-        public PieceSpawner(IGameAssets gameAssets, ObjectPoolManager objectPoolManager, DiContainer diContainer)
+        public PieceSpawnerService(IGameAssets gameAssets, ObjectPoolManager objectPoolManager, DiContainer diContainer)
         {
             this.gameAssets        = gameAssets;
             this.objectPoolManager = objectPoolManager;

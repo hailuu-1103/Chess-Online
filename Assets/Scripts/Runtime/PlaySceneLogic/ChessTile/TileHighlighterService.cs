@@ -9,7 +9,7 @@ namespace Runtime.PlaySceneLogic.ChessTile
     using UnityEngine;
     using Zenject;
 
-    public class TileHighlighter : IDisposable
+    public class TileHighlighterService : IDisposable
     {
         #region inject
 
@@ -22,7 +22,7 @@ namespace Runtime.PlaySceneLogic.ChessTile
 
         private Vector2Int currentHover = -Vector2Int.one;
 
-        public TileHighlighter(ILogService logService, IGameAssets gameAssets, SignalBus signalBus, BoardController boardController)
+        public TileHighlighterService(ILogService logService, IGameAssets gameAssets, SignalBus signalBus, BoardController boardController)
         {
             this.logService      = logService;
             this.gameAssets      = gameAssets;
@@ -41,20 +41,20 @@ namespace Runtime.PlaySceneLogic.ChessTile
             if (this.currentHover == -Vector2Int.one)
             {
                 this.currentHover                                                                                             = pieceHoverIndex;
-                this.boardController.runtimeTiles[pieceHoverIndex.x, pieceHoverIndex.y].GetComponent<MeshRenderer>().material = highlightPieceMat;
+                this.boardController.RuntimeTiles[pieceHoverIndex.x, pieceHoverIndex.y].GetComponent<MeshRenderer>().material = highlightPieceMat;
             }
 
             // Hover another piece
             if (this.currentHover != pieceHoverIndex)
             {
-                this.boardController.runtimeTiles[this.currentHover.x, this.currentHover.y].GetComponent<MeshRenderer>().material = transparentMat;
+                this.boardController.RuntimeTiles[this.currentHover.x, this.currentHover.y].GetComponent<MeshRenderer>().material = transparentMat;
                 this.currentHover                                                                                                 = pieceHoverIndex;
-                this.boardController.runtimeTiles[pieceHoverIndex.x, pieceHoverIndex.y].GetComponent<MeshRenderer>().material     = highlightPieceMat;
+                this.boardController.RuntimeTiles[pieceHoverIndex.x, pieceHoverIndex.y].GetComponent<MeshRenderer>().material     = highlightPieceMat;
             }
             else
             {
                 if (this.currentHover == -Vector2Int.one) return;
-                this.boardController.runtimeTiles[this.currentHover.x, this.currentHover.y].GetComponent<MeshRenderer>().material = highlightPieceMat;
+                this.boardController.RuntimeTiles[this.currentHover.x, this.currentHover.y].GetComponent<MeshRenderer>().material = highlightPieceMat;
             }
         }
 
