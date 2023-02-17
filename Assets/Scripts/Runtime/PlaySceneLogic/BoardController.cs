@@ -100,7 +100,7 @@ namespace Runtime.PlaySceneLogic
                 {
                     if (this.specialMoveType != SpecialMoveType.None)
                     {
-                        currentPiece.PerformSpecialMove();
+                        currentPiece.PerformSpecialMove(this.previousTileIndex, this.currentlyTileIndex);
                     }
                     else
                     {
@@ -183,11 +183,7 @@ namespace Runtime.PlaySceneLogic
 
             return true;
         }
-
-        #region special moves
         
-
-        #endregion
         #region ultility
 
         public bool DetectCheck(PieceTeam opponentTeam)

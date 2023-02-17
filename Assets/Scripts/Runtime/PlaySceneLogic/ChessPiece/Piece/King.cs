@@ -11,7 +11,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
         public override void OnInit()
         {
             base.OnInit();
-            this.specialMoves = new CastlingMove();
+            this.specialMoves = new CastlingMove(this.boardController);
         }
 
         public override List<Vector2Int> GetAvailableMoves(BaseChessPiece[,] chessboard)

@@ -62,9 +62,9 @@ namespace Runtime.PlaySceneLogic.ChessPiece
 
         public virtual SpecialMoveType GetSpecialMoveType(BaseChessPiece currentPiece, ref List<Vector2Int> availableMoves, Vector2Int targetTileIndex) { return SpecialMoveType.None; }
 
-        public virtual void PerformSpecialMove()
+        public virtual void PerformSpecialMove(Vector2Int currentPieceIndex, Vector2Int targetPieceIndex)
         {
-            this.specialMoves.Execute();
+            this.specialMoves.Execute(currentPieceIndex, targetPieceIndex);
         }
     }
 }
