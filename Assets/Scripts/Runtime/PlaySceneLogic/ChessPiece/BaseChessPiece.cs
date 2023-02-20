@@ -3,6 +3,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece
     using System;
     using System.Collections.Generic;
     using DG.Tweening;
+    using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using GameFoundation.Scripts.Utilities.LogService;
     using GameFoundation.Scripts.Utilities.ObjectPool;
     using Runtime.PlaySceneLogic.SpecialMoves;
@@ -21,15 +22,17 @@ namespace Runtime.PlaySceneLogic.ChessPiece
         protected PieceRegularMoveHelper pieceRegularMoveHelper;
         protected ILogService            logService;
         protected ISpecialMoves          specialMoves;
+        protected IScreenManager         screenManager;
 
         [Inject]
-        private void Init(SignalBus signal, BoardController controller, ILogService service, ISpecialMoves special, PieceRegularMoveHelper helper)
+        private void Init(SignalBus signal, BoardController controller, ILogService service, ISpecialMoves special, IScreenManager screen, PieceRegularMoveHelper helper)
         {
             this.signalBus              = signal;
             this.boardController        = controller;
             this.logService             = service;
             this.pieceRegularMoveHelper = helper;
             this.specialMoves           = special;
+            this.screenManager          = screen;
             this.OnInit();
         }
 
@@ -47,8 +50,10 @@ namespace Runtime.PlaySceneLogic.ChessPiece
         {
             this.transform.DOMove(targetTile.transform.position, GameStaticValue.MoveDuration);
             this.logService.LogWithColor("Play move sound here", Color.yellow);
-            var targetPiece = this.boardController.GetPieceByIndex(this.boardController.GetTileIndex(targetTile));
-
+            var targetTileIndex = this.boardController.GetTileIndex(targetTile);
+            this.ReplaceData(targetTileIndex.x, targetTileIndex.y);
+            var targetPiece     = this.boardController.GetPieceByIndex(this.boardController.GetTileIndex(targetTile));
+            
             // Kill move
             if (targetPiece != null)
             {

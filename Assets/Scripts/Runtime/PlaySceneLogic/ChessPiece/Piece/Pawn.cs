@@ -1,6 +1,8 @@
 namespace Runtime.PlaySceneLogic.ChessPiece.Piece
 {
+    using System;
     using System.Collections.Generic;
+    using Runtime.PlaySceneLogic.SpecialMoves;
     using UnityEngine;
 
     public class Pawn : BaseChessPiece
@@ -50,6 +52,48 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
             checkMovesIndex.Add(new Vector2Int(this.row, this.col));
             checkMovesIndex.Add(kingPieceIndex);
             return checkMovesIndex;
+        }
+
+        public override SpecialMoveType GetSpecialMoveType(BaseChessPiece currentPiece, ref List<Vector2Int> availableMoves, Vector2Int targetTileIndex)
+        {
+            var specialMoveType   = SpecialMoveType.None;
+            var moveList          = this.boardController.MoveList;
+            var direction         = this.team == PieceTeam.White ? 1 : -1;
+            var currentPieceIndex = new Vector2Int(this.row, this.col);
+
+            if (moveList.Count > 0 && this.boardController.RuntimePieces[moveList[^1][1].x, moveList[^1][1].y].type == PieceType.Pawn)
+            {
+                var lastMove   = moveList[^1];
+                var enemyPiece = this.boardController.RuntimePieces[lastMove[1].x, lastMove[1].y];
+
+                if (Math.Abs(lastMove[0].y - lastMove[1].y) == 2 && enemyPiece.team != this.team && lastMove[1].y == this.col)
+                {
+                    if (lastMove[1].x == this.row - 1)
+                    {
+                        availableMoves.Add(new Vector2Int(this.row - 1, this.col + direction));
+                        this.specialMoves = new EnPassantMove(this.boardController);
+                        specialMoveType   = SpecialMoveType.EnPassant;
+                    }
+
+                    if (lastMove[1].x == this.row + 1)
+                    {
+                        availableMoves.Add(new Vector2Int(this.row + 1, this.col + direction));
+                        this.specialMoves = new EnPassantMove(this.boardController);
+                        specialMoveType   = SpecialMoveType.EnPassant;
+                    }
+                }
+            }
+
+            if ((this.team == PieceTeam.White && currentPieceIndex.y == 6 && targetTileIndex.y == 7) ||
+                (this.team == PieceTeam.Black && currentPieceIndex.y == 1 && targetTileIndex.y == 0))
+            {
+                availableMoves.Add(new Vector2Int(currentPieceIndex.x, this.team == PieceTeam.White ? 7 : 0));
+                this.specialMoves = new PromotionMove(this.screenManager, this.boardController);
+                specialMoveType   = SpecialMoveType.Promotion;
+            }
+
+            Debug.Log($"Special Move Type: {specialMoveType}");
+            return specialMoveType;
         }
     }
 }

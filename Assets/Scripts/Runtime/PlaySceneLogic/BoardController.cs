@@ -14,10 +14,11 @@ namespace Runtime.PlaySceneLogic
     public enum SpecialMoveType
     {
         None,
-        Castling = 1,
+        Castling  = 1,
         EnPassant = 2,
         Promotion = 3
     }
+
     public class BoardController : MonoBehaviour
     {
         #region inject
@@ -44,7 +45,7 @@ namespace Runtime.PlaySceneLogic
         private Vector2Int       currentlyTileIndex = -Vector2Int.one;
         private Vector2Int       previousTileIndex  = -Vector2Int.one;
         private int              inTurnMoveCount;
-        
+
         [Inject]
         private void OnInit(ILogService logger, TileSpawnerService tileSpawner, PieceSpawnerService pieceSpawner, TileHighlighterService tileHighlighter, SignalBus signal)
         {
@@ -78,6 +79,10 @@ namespace Runtime.PlaySceneLogic
                 if (preMoveTile.Count > 0) this.tileHighlighterService.HighlightPreMoveTiles(preMoveTile);
             }
 
+            // this.logService.LogWithColor($"Current piece = {this.GetPieceByIndex(signal.CurrentTileIndex)}, row: {this.GetPieceByIndex(signal.CurrentTileIndex).row}, column: {this.GetPieceByIndex(signal.CurrentTileIndex).col}", Color.yellow);
+            // this.logService.LogWithColor($"Current tile index = {this.currentlyTileIndex}", Color.yellow);
+            // this.logService.LogWithColor($"Previous tile index = {this.previousTileIndex}", Color.yellow);
+            // this.logService.LogWithColor($"Move count = {this.inTurnMoveCount}", Color.yellow);
             this.previousTileIndex =  this.currentlyTileIndex;
             this.inTurnMoveCount   += 1;
 
@@ -106,6 +111,7 @@ namespace Runtime.PlaySceneLogic
                     {
                         currentPiece.PerformNormalMove(this.previousTileIndex, targetTile);
                     }
+
                     var opponentTeam = currentPiece.team == PieceTeam.White ? PieceTeam.Black : PieceTeam.White;
                     this.RuntimePieces[this.currentlyTileIndex.x, this.currentlyTileIndex.y] = this.GetPieceByIndex(this.previousTileIndex);
                     this.RuntimePieces[this.previousTileIndex.x, this.previousTileIndex.y]   = null;
@@ -147,7 +153,13 @@ namespace Runtime.PlaySceneLogic
             var targetKingIndex         = this.GetPieceIndex(kingTeam, PieceType.King);
             var simulateAttackingPieces = this.GetAllOpponentPiecesInBoard(simulateBoard, kingTeam);
             var simulationMoves         = new List<Vector2Int>();
-            foreach (var checkMovesIndex in from attackingPiece in simulateAttackingPieces let attackingPieceIndex = new Vector2Int(attackingPiece.row, attackingPiece.col) let pieceAvailableMoves = attackingPiece.GetAvailableMoves(simulateBoard) select attackingPiece.GetCheckMovesIndex(attackingPieceIndex, pieceAvailableMoves, targetKingIndex) into checkMovesIndex where checkMovesIndex != null select checkMovesIndex)
+            foreach (var checkMovesIndex in from attackingPiece in simulateAttackingPieces
+                     let attackingPieceIndex = new Vector2Int(attackingPiece.row, attackingPiece.col)
+                     let pieceAvailableMoves = attackingPiece.GetAvailableMoves(simulateBoard)
+                     select attackingPiece.GetCheckMovesIndex(attackingPieceIndex, pieceAvailableMoves, targetKingIndex)
+                     into checkMovesIndex
+                     where checkMovesIndex != null
+                     select checkMovesIndex)
             {
                 simulationMoves.AddRange(checkMovesIndex);
             }
@@ -156,11 +168,10 @@ namespace Runtime.PlaySceneLogic
             {
                 var moveToRemove = ListExtensions.GetIntersectList(simulationMoves, this.pieceAvailableMovesIndex);
                 movesToRemove.AddRange(this.pieceAvailableMovesIndex.Where(pieceMoveIndex => !moveToRemove.Contains(pieceMoveIndex)));
-
-                chessPiece.row = actualPieceIndex.x;
-                chessPiece.col = actualPieceIndex.y;
             }
 
+            chessPiece.row = actualPieceIndex.x;
+            chessPiece.col = actualPieceIndex.y;
             foreach (var move in movesToRemove)
             {
                 this.pieceAvailableMovesIndex.Remove(move);
@@ -183,7 +194,7 @@ namespace Runtime.PlaySceneLogic
 
             return true;
         }
-        
+
         #region ultility
 
         public bool DetectCheck(PieceTeam opponentTeam)
@@ -223,7 +234,13 @@ namespace Runtime.PlaySceneLogic
                     select availableMove);
             }
 
-            foreach (var checkMoveIndex in from attackingPiece in attackingPieces let attackingPieceIndex = new Vector2Int(attackingPiece.row, attackingPiece.col) let pieceAvailableMoves = attackingPiece.GetAvailableMoves(this.RuntimePieces) select attackingPiece.GetCheckMovesIndex(attackingPieceIndex, pieceAvailableMoves, this.GetPieceIndex(opponentTeam, PieceType.King)) into checkMoveIndex where checkMoveIndex != null select checkMoveIndex)
+            foreach (var checkMoveIndex in from attackingPiece in attackingPieces
+                     let attackingPieceIndex = new Vector2Int(attackingPiece.row, attackingPiece.col)
+                     let pieceAvailableMoves = attackingPiece.GetAvailableMoves(this.RuntimePieces)
+                     select attackingPiece.GetCheckMovesIndex(attackingPieceIndex, pieceAvailableMoves, this.GetPieceIndex(opponentTeam, PieceType.King))
+                     into checkMoveIndex
+                     where checkMoveIndex != null
+                     select checkMoveIndex)
             {
                 checkMovesIndex.AddRange(checkMoveIndex);
             }
