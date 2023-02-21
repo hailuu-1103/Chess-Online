@@ -2,6 +2,7 @@ namespace Runtime.PlaySceneLogic
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.Utilities.LogService;
     using Runtime.Input.Signal;
     using Runtime.PlaySceneLogic.ChessPiece;
@@ -32,7 +33,7 @@ namespace Runtime.PlaySceneLogic
         #endregion
 
         [SerializeField] private Transform tileHolder;
-        [SerializeField] private Transform pieceHolder;
+        [Inject]         private Transform pieceHolder;
 
         public GameObject[,]     RuntimeTiles  = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
         public BaseChessPiece[,] RuntimePieces = new BaseChessPiece[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
@@ -66,7 +67,7 @@ namespace Runtime.PlaySceneLogic
             this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder);
         }
 
-        private void MovePiece(OnMouseEnterSignal signal)
+        private async void MovePiece(OnMouseEnterSignal signal)
         {
             // Show available move
             if (this.GetPieceByIndex(signal.CurrentTileIndex) != null)
@@ -78,11 +79,7 @@ namespace Runtime.PlaySceneLogic
                 var preMoveTile = this.GetPreMoveTiles(currentPiece);
                 if (preMoveTile.Count > 0) this.tileHighlighterService.HighlightPreMoveTiles(preMoveTile);
             }
-
-            // this.logService.LogWithColor($"Current piece = {this.GetPieceByIndex(signal.CurrentTileIndex)}, row: {this.GetPieceByIndex(signal.CurrentTileIndex).row}, column: {this.GetPieceByIndex(signal.CurrentTileIndex).col}", Color.yellow);
-            // this.logService.LogWithColor($"Current tile index = {this.currentlyTileIndex}", Color.yellow);
-            // this.logService.LogWithColor($"Previous tile index = {this.previousTileIndex}", Color.yellow);
-            // this.logService.LogWithColor($"Move count = {this.inTurnMoveCount}", Color.yellow);
+            
             this.previousTileIndex =  this.currentlyTileIndex;
             this.inTurnMoveCount   += 1;
 
@@ -104,7 +101,7 @@ namespace Runtime.PlaySceneLogic
                 if (this.pieceAvailableMovesIndex.Contains(this.currentlyTileIndex))
                 {
                     if (this.specialMoveType != SpecialMoveType.None)
-                    {
+                    { 
                         currentPiece.PerformSpecialMove(this.previousTileIndex, this.currentlyTileIndex);
                     }
                     else

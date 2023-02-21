@@ -63,7 +63,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece
             return pieces;
         }
 
-        private async UniTask<BaseChessPiece> SpawnSinglePiece(Transform parent, PieceType type, PieceTeam team, int x, int y)
+        public async UniTask<BaseChessPiece> SpawnSinglePiece(Transform parent, PieceType type, PieceTeam team, int x, int y)
         {
             if (type == PieceType.None) return null;
             var piece = await this.objectPoolManager.Spawn(Enum.GetName(typeof(PieceType), type), parent);

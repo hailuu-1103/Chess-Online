@@ -21,6 +21,10 @@ MonoBehaviour:
     m_Address: MainSceneScreenView
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: e3375bd2bc7d79a4a8dbf1b317a63d91
+    m_Address: PromotionPopUpView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 679620bf13a8f164ea2400b1335db13b, type: 2}
   m_SchemaSet:

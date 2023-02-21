@@ -1,6 +1,8 @@
 namespace Runtime.PlaySceneLogic.SpecialMoves
 {
-    using System.Collections.Generic;
+    using System.Collections;
+    using System.Threading.Tasks;
+    using Cysharp.Threading.Tasks;
     using UnityEngine;
 
     public interface ISpecialMoves

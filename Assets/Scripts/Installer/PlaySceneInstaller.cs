@@ -15,24 +15,25 @@ namespace Installer
     public class PlaySceneInstaller : BaseSceneInstaller
     {
         [SerializeField] private PlaySceneCamera playSceneCamera;
+        [SerializeField] private Transform       pieceHolder;
 
         public override void InstallBindings()
         {
             base.InstallBindings();
-
+            this.Container.Bind<Transform>().FromInstance(this.pieceHolder).AsCached();
             this.Container.Bind<PlaySceneCamera>().FromInstance(this.playSceneCamera).AsCached();
 
             this.Container.Bind<TileSpawnerService>().AsCached().NonLazy();
             this.Container.Bind<TileHighlighterService>().AsCached().NonLazy();
             this.Container.Bind<PieceSpawnerService>().AsCached().NonLazy();
             this.Container.Bind<PieceRegularMoveHelper>().AsCached().NonLazy();
-            
+
             this.Container.Bind<BoardController>().FromComponentInHierarchy().AsCached();
             this.Container.Rebind<ISpecialMoves>().To<CastlingMove>().AsSingle();
             this.Container.Rebind<ISpecialMoves>().To<EnPassantMove>().AsSingle();
             this.Container.Rebind<ISpecialMoves>().To<PromotionMove>().AsSingle();
             this.InitSignal(this.Container);
-            
+
             this.Container.InitScreenManually<MainSceneScreenPresenter>();
         }
 

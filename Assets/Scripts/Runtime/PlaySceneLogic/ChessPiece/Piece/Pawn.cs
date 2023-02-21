@@ -68,14 +68,14 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
 
                 if (Math.Abs(lastMove[0].y - lastMove[1].y) == 2 && enemyPiece.team != this.team && lastMove[1].y == this.col)
                 {
-                    if (lastMove[1].x == this.row - 1)
+                    if (lastMove[1].x == this.row - 1 && targetTileIndex.x == this.row - 1)
                     {
                         availableMoves.Add(new Vector2Int(this.row - 1, this.col + direction));
                         this.specialMoves = new EnPassantMove(this.boardController);
                         specialMoveType   = SpecialMoveType.EnPassant;
                     }
 
-                    if (lastMove[1].x == this.row + 1)
+                    if (lastMove[1].x == this.row + 1 && targetTileIndex.x == this.row + 1)
                     {
                         availableMoves.Add(new Vector2Int(this.row + 1, this.col + direction));
                         this.specialMoves = new EnPassantMove(this.boardController);
@@ -88,12 +88,20 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
                 (this.team == PieceTeam.Black && currentPieceIndex.y == 1 && targetTileIndex.y == 0))
             {
                 availableMoves.Add(new Vector2Int(currentPieceIndex.x, this.team == PieceTeam.White ? 7 : 0));
-                this.specialMoves = new PromotionMove(this.screenManager, this.boardController);
+                this.specialMoves = new PromotionMove(this.screenManager, this.boardController, this.pieceSpawnerService);
                 specialMoveType   = SpecialMoveType.Promotion;
             }
 
-            Debug.Log($"Special Move Type: {specialMoveType}");
+            this.logService.LogWithColor($"Special Move Type: {specialMoveType}", Color.cyan);
             return specialMoveType;
+        }
+
+        public override void PerformSpecialMove(Vector2Int currentPieceIndex, Vector2Int targetPieceIndex)
+        {
+            if (this.specialMoves is PromotionMove)
+            {
+            }            
+            base.PerformSpecialMove(currentPieceIndex, targetPieceIndex);
         }
     }
 }
