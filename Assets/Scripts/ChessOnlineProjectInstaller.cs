@@ -2,6 +2,7 @@ using GameData;
 using GameFoundation.Scripts;
 using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
 using GameFoundation.Scripts.Utilities;
+using MultiplayerNetwork.Controller;
 using Zenject;
 
 public class ChessOnlineProjectInstaller : MonoInstaller
@@ -11,6 +12,7 @@ public class ChessOnlineProjectInstaller : MonoInstaller
         GameFoundationInstaller.Install(this.Container);
         this.Container.Bind<UserData>().FromResolveGetter<HandleLocalDataServices>(services => services.Load<UserData>()).AsCached();
         this.Container.Bind<ChessOnlineSceneDirector>().AsCached().NonLazy();
+        MultiplayerNetworkInstaller.Install(this.Container);
         this.Container.Rebind<SceneDirector>().FromResolveGetter<ChessOnlineSceneDirector>(data => data).AsCached();
     }
 }

@@ -18,11 +18,19 @@ MonoBehaviour:
   m_GUID: 073112d768822754f80e2c3f5de8ccd6
   m_SerializeEntries:
   - m_GUID: 88c68413ff6eb2448a8335cfc7b56f15
-    m_Address: MainSceneScreenView
+    m_Address: GameScreenView
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: e3375bd2bc7d79a4a8dbf1b317a63d91
     m_Address: PromotionPopUpView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2f332afcf606dfc4ba368b9f613aaa7c
+    m_Address: LoadingScreenView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 8c79488cab46fad4e930c234be8e086e
+    m_Address: LobbyScreenView
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0

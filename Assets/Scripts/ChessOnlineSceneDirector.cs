@@ -13,7 +13,7 @@ public class ChessOnlineSceneDirector : SceneDirector
     public async UniTask LoadMainScene()    => await this.LoadSingleSceneAsync(SceneName.Main);
     public async UniTask LoadPlayScene()    => await this.LoadSingleSceneAsync(SceneName.PlayScene);
 
-    private static class SceneName
+    public static class SceneName
     {
         public const string Loading   = "1.LoadingScene";
         public const string Main      = "2.MainScene";

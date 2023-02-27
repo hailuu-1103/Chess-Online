@@ -17,8 +17,16 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: e77fcf8c8897ad4488a3ebc9655a50c3
   m_SerializeEntries:
-  - m_GUID: 19ed4dcbbdd767f4abc321958e687559
+  - m_GUID: 99c9720ab356a0642a771bea13969a05
     m_Address: 2.MainScene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 19ed4dcbbdd767f4abc321958e687559
+    m_Address: 3.GameScene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: fef8760b1c3613e4b93c22f0d0a42ff3
+    m_Address: 1.LoadingScene
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0

@@ -1,9 +1,6 @@
 namespace Runtime.PlaySceneLogic.ChessPiece
 {
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Cysharp.Threading.Tasks;
     using DG.Tweening;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using GameFoundation.Scripts.Utilities.LogService;
