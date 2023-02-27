@@ -2615,7 +2615,7 @@
             <summary>SQL query to filter room matches. For default-typed lobbies, use ExpectedCustomRoomProperties instead.</summary>
         </member>
         <member name="F:Fusion.Photon.Realtime.OpJoinRandomRoomParams.ExpectedUsers">
-            <summary>The expected users list blocks player slots for your friends or team mates to join the room, too.</summary>
+            <summary>The expected users list blocks player slots for your friends or winTeam mates to join the room, too.</summary>
             <remarks>See: https://doc.photonengine.com/en-us/pun/v2/lobby-and-matchmaking/matchmaking-and-lobby#matchmaking_slot_reservation </remarks>
         </member>
         <member name="T:Fusion.Photon.Realtime.EnterRoomParams">

@@ -33,6 +33,10 @@ MonoBehaviour:
     m_Address: LobbyScreenView
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 8e4dffd3b08037e409f90ac4845fe5f9
+    m_Address: GameResultPopupView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 679620bf13a8f164ea2400b1335db13b, type: 2}
   m_SchemaSet:

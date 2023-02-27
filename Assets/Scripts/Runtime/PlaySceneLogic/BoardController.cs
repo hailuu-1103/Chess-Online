@@ -3,10 +3,13 @@ namespace Runtime.PlaySceneLogic
     using System.Collections.Generic;
     using System.Linq;
     using Cysharp.Threading.Tasks;
+    using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
+    using GameFoundation.Scripts.UIModule.Utilities;
     using GameFoundation.Scripts.Utilities.LogService;
     using Runtime.Input.Signal;
     using Runtime.PlaySceneLogic.ChessPiece;
     using Runtime.PlaySceneLogic.ChessTile;
+    using Runtime.UI;
     using Ultility;
     using UniRx;
     using UnityEngine;
@@ -29,6 +32,7 @@ namespace Runtime.PlaySceneLogic
         private TileHighlighterService tileHighlighterService;
         private PieceSpawnerService    pieceSpawnerService;
         private SignalBus              signalBus;
+        private IScreenManager         screenManager;
 
         #endregion
 
@@ -48,13 +52,14 @@ namespace Runtime.PlaySceneLogic
         private int              inTurnMoveCount;
 
         [Inject]
-        private void OnInit(ILogService logger, TileSpawnerService tileSpawner, PieceSpawnerService pieceSpawner, TileHighlighterService tileHighlighter, SignalBus signal)
+        private void OnInit(ILogService logger, IScreenManager screen,TileSpawnerService tileSpawner, PieceSpawnerService pieceSpawner, TileHighlighterService tileHighlighter, SignalBus signal)
         {
             this.logService             = logger;
             this.tileSpawnerService     = tileSpawner;
             this.tileHighlighterService = tileHighlighter;
             this.pieceSpawnerService    = pieceSpawner;
             this.signalBus              = signal;
+            this.screenManager          = screen;
         }
 
         private void OnEnable() { this.signalBus.Subscribe<OnMouseEnterSignal>(this.MovePiece); }
@@ -67,7 +72,7 @@ namespace Runtime.PlaySceneLogic
             this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder);
         }
 
-        private async void MovePiece(OnMouseEnterSignal signal)
+        private void MovePiece(OnMouseEnterSignal signal)
         {
             // Show available move
             if (this.GetPieceByIndex(signal.CurrentTileIndex) != null)
@@ -115,7 +120,14 @@ namespace Runtime.PlaySceneLogic
                     if (this.DetectCheckmate(opponentTeam))
                     {
                         this.logService.LogWithColor("Check mate! ", Color.red);
+                        this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(currentPiece.team, GameResultStatus.Win, "Checkmate!"));
                     }
+
+                    // if (this.DetectDraw(opponentTeam, out var drawCause))
+                    // {
+                    //     this.logService.LogWithColor("Draw! ", Color.red);
+                    //     this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(currentPiece.team, GameResultStatus.Draw, drawCause));
+                    // }
 
                     this.isWhiteTurn.Value = !this.isWhiteTurn.Value;
                 }
@@ -213,6 +225,56 @@ namespace Runtime.PlaySceneLogic
             return isCheck;
         }
 
+        public bool DetectDraw(PieceTeam opponentTeam, out string drawCause)
+        {
+            var currentPieces  = new List<BaseChessPiece>();
+            var opponentPieces = new List<BaseChessPiece>();
+            foreach (var piece in this.RuntimePieces)
+            {
+                if (piece.team == opponentTeam)
+                {
+                    opponentPieces.Add(piece);
+                }
+                else
+                {
+                    currentPieces.Add(piece);
+                }
+            }
+            // Repeat move
+            if (this.MoveList.Count > 8 && this.MoveList[^1][0] == this.MoveList[^3][1] && this.MoveList[^2][0] == this.MoveList[^4][1] && this.MoveList[^1][0] == this.MoveList[^5][0] && this.MoveList[^2][0] == this.MoveList[^6][0] && this.MoveList[^1][0] == this.MoveList[^7][1]&& this.MoveList[^2][0] == this.MoveList[^8][1])
+            {
+                drawCause = "Repeat move";
+                return true;
+            }
+
+            drawCause = null;
+            
+            // No move
+            if (!this.DetectCheck(opponentTeam))
+            {
+                var availableMoves = new List<Vector2Int>();
+                foreach (var piece in opponentPieces)
+                {
+                    availableMoves.AddRange(piece.GetAvailableMoves(this.RuntimePieces));
+                }
+
+                if (availableMoves.Count == 0)
+                {
+                    drawCause = "No move left. PAT";
+                    return true;
+                }
+            }
+            
+            // Equal pieces
+            if (this.RuntimePieces.Length > 3) return false;
+            if (opponentPieces.Count != 1 || currentPieces.Count != 2) return false;
+            {
+                if (!opponentPieces.Any(piece => piece.type is PieceType.Knight or PieceType.Bishop)) return false;
+                drawCause = "Equal pieces";
+                return true;
+            }
+            
+        }
         public bool DetectCheckmate(PieceTeam opponentTeam)
         {
             if (!this.DetectCheck(opponentTeam)) return false;

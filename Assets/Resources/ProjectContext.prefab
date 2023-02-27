@@ -74,3 +74,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2175e52de4dd46f382cc6b704f02fc17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playlistController: {fileID: 6791293291719749479, guid: f313465ac92f3ab499e073e2bad76053,
+    type: 3}

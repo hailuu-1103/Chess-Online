@@ -36,7 +36,7 @@ namespace Runtime.UI
         public                   Button BtnClose           => this.btnClose;
     }
 
-    [PopupInfo(nameof(PromotionPopUpView), isEnableBlur: true)]
+    [PopupInfo(nameof(PromotionPopUpView), isCloseWhenTapOutside:false)]
     public class PromotionPopUpPresenter : BasePopupPresenter<PromotionPopUpView, PromotionPopUpModel>
     {
         private          List<PromotionItemPresenter> promotionItemPresenters = new();
