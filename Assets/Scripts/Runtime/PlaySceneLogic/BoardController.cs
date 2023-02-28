@@ -1,10 +1,9 @@
 namespace Runtime.PlaySceneLogic
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
-    using GameFoundation.Scripts.UIModule.Utilities;
     using GameFoundation.Scripts.Utilities.LogService;
     using Runtime.Input.Signal;
     using Runtime.PlaySceneLogic.ChessPiece;
@@ -30,6 +29,7 @@ namespace Runtime.PlaySceneLogic
         private ILogService            logService;
         private TileSpawnerService     tileSpawnerService;
         private TileHighlighterService tileHighlighterService;
+        private PlaySceneCamera        playSceneCamera;
         private PieceSpawnerService    pieceSpawnerService;
         private SignalBus              signalBus;
         private IScreenManager         screenManager;
@@ -45,14 +45,16 @@ namespace Runtime.PlaySceneLogic
         public BoolReactiveProperty isWhiteTurn = new(true);
         public List<Vector2Int[]>   MoveList    = new();
 
-        private List<Vector2Int> pieceAvailableMovesIndex = new();
-        private SpecialMoveType  specialMoveType;
-        private Vector2Int       currentlyTileIndex = -Vector2Int.one;
-        private Vector2Int       previousTileIndex  = -Vector2Int.one;
-        private int              inTurnMoveCount;
+        private List<Vector2Int>    pieceAvailableMovesIndex = new();
+        private SpecialMoveType     specialMoveType;
+        private Vector2Int          currentlyTileIndex = -Vector2Int.one;
+        private Vector2Int          previousTileIndex  = -Vector2Int.one;
+        private IDisposable switchCamDispose;
+        private int                 inTurnMoveCount;
 
         [Inject]
-        private void OnInit(ILogService logger, IScreenManager screen,TileSpawnerService tileSpawner, PieceSpawnerService pieceSpawner, TileHighlighterService tileHighlighter, SignalBus signal)
+        private void OnInit(ILogService logger, IScreenManager screen, PlaySceneCamera playCamera, TileSpawnerService tileSpawner, PieceSpawnerService pieceSpawner,
+            TileHighlighterService tileHighlighter, SignalBus signal)
         {
             this.logService             = logger;
             this.tileSpawnerService     = tileSpawner;
@@ -60,11 +62,17 @@ namespace Runtime.PlaySceneLogic
             this.pieceSpawnerService    = pieceSpawner;
             this.signalBus              = signal;
             this.screenManager          = screen;
+            this.playSceneCamera        = playCamera;
+            this.switchCamDispose = this.isWhiteTurn.Subscribe(whiteTurn => this.playSceneCamera.SetMainCamera(whiteTurn));
         }
 
         private void OnEnable() { this.signalBus.Subscribe<OnMouseEnterSignal>(this.MovePiece); }
 
-        private void OnDisable() { this.signalBus.Unsubscribe<OnMouseEnterSignal>(this.MovePiece); }
+        private void OnDisable()
+        {
+            this.signalBus.Unsubscribe<OnMouseEnterSignal>(this.MovePiece);
+            this.switchCamDispose?.Dispose();
+        }
 
         private async void Start()
         {
@@ -84,7 +92,7 @@ namespace Runtime.PlaySceneLogic
                 var preMoveTile = this.GetPreMoveTiles(currentPiece);
                 if (preMoveTile.Count > 0) this.tileHighlighterService.HighlightPreMoveTiles(preMoveTile);
             }
-            
+
             this.previousTileIndex =  this.currentlyTileIndex;
             this.inTurnMoveCount   += 1;
 
@@ -106,7 +114,7 @@ namespace Runtime.PlaySceneLogic
                 if (this.pieceAvailableMovesIndex.Contains(this.currentlyTileIndex))
                 {
                     if (this.specialMoveType != SpecialMoveType.None)
-                    { 
+                    {
                         currentPiece.PerformSpecialMove(this.previousTileIndex, this.currentlyTileIndex);
                     }
                     else
@@ -231,24 +239,25 @@ namespace Runtime.PlaySceneLogic
             var opponentPieces = new List<BaseChessPiece>();
             foreach (var piece in this.RuntimePieces)
             {
-                if (piece.team == opponentTeam)
+                if (piece != null && piece.team == opponentTeam)
                 {
                     opponentPieces.Add(piece);
                 }
-                else
+
+                if (piece != null && piece.team != opponentTeam)
                 {
                     currentPieces.Add(piece);
                 }
             }
+
             // Repeat move
-            if (this.MoveList.Count > 8 && this.MoveList[^1][0] == this.MoveList[^3][1] && this.MoveList[^2][0] == this.MoveList[^4][1] && this.MoveList[^1][0] == this.MoveList[^5][0] && this.MoveList[^2][0] == this.MoveList[^6][0] && this.MoveList[^1][0] == this.MoveList[^7][1]&& this.MoveList[^2][0] == this.MoveList[^8][1])
+            if (this.MoveList.Count > 8 && this.MoveList[^1][0] == this.MoveList[^3][1] && this.MoveList[^2][0] == this.MoveList[^4][1] && this.MoveList[^1][0] == this.MoveList[^5][0] &&
+                this.MoveList[^2][0] == this.MoveList[^6][0] && this.MoveList[^1][0] == this.MoveList[^7][1] && this.MoveList[^2][0] == this.MoveList[^8][1])
             {
                 drawCause = "Repeat move";
                 return true;
             }
 
-            drawCause = null;
-            
             // No move
             if (!this.DetectCheck(opponentTeam))
             {
@@ -264,7 +273,9 @@ namespace Runtime.PlaySceneLogic
                     return true;
                 }
             }
-            
+
+            drawCause = null;
+
             // Equal pieces
             if (this.RuntimePieces.Length > 3) return false;
             if (opponentPieces.Count != 1 || currentPieces.Count != 2) return false;
@@ -273,8 +284,8 @@ namespace Runtime.PlaySceneLogic
                 drawCause = "Equal pieces";
                 return true;
             }
-            
         }
+
         public bool DetectCheckmate(PieceTeam opponentTeam)
         {
             if (!this.DetectCheck(opponentTeam)) return false;

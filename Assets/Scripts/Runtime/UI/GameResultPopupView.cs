@@ -6,7 +6,6 @@ namespace Runtime.UI
     using Runtime.PlaySceneLogic.ChessPiece;
     using TMPro;
     using UnityEngine;
-    using UnityEngine.Serialization;
     using UnityEngine.UI;
     using Zenject;
 
@@ -33,12 +32,12 @@ namespace Runtime.UI
 
     public class GameResultPopupView : BaseView
     {
-        [SerializeField]                                    private TextMeshProUGUI txtTeam;
-        [SerializeField]                                    private TextMeshProUGUI txtGameResult;
-        [SerializeField]                                    private TextMeshProUGUI txtResultCause;
+        [SerializeField] private TextMeshProUGUI txtTeam;
+        [SerializeField] private TextMeshProUGUI txtGameResult;
+        [SerializeField] private TextMeshProUGUI txtResultCause;
         [SerializeField] private Button          btnRematch;
 
-        public Button BtnRematch                                                    => this.btnRematch;
+        public Button BtnRematch => this.btnRematch;
 
         public void SetView(string team, string gameResult, string resultCause)
         {
