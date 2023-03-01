@@ -26,24 +26,25 @@ namespace Runtime.PlaySceneLogic
     {
         #region inject
 
-        private ILogService            logService;
-        private TileSpawnerService     tileSpawnerService;
+        private ILogService logService;
+        private TileSpawnerService tileSpawnerService;
         private TileHighlighterService tileHighlighterService;
-        private PlaySceneCamera        playSceneCamera;
-        private PieceSpawnerService    pieceSpawnerService;
-        private SignalBus              signalBus;
-        private IScreenManager         screenManager;
-
+        private PlaySceneCamera playSceneCamera;
+        private PieceSpawnerService pieceSpawnerService;
+        private SignalBus signalBus;
+        private IScreenManager screenManager;
+        private FileManager fileManager;
         #endregion
 
         [SerializeField] private Transform tileHolder;
-        [Inject]         private Transform pieceHolder;
+        [Inject] private Transform pieceHolder;
 
-        public GameObject[,]     RuntimeTiles  = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
+        public GameObject[,] RuntimeTiles = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
         public BaseChessPiece[,] RuntimePieces = new BaseChessPiece[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
 
-        public BoolReactiveProperty isWhiteTurn = new(true);
-        public List<Vector2Int[]>   MoveList    = new();
+        public BoolReactiveProperty                 isWhiteTurn = new(true);
+        public List<Vector2Int[]>                   MoveList = new();
+        public List<(PieceTeam, PieceType)>         ChessMoveList = new();
 
         private List<Vector2Int>    pieceAvailableMovesIndex = new();
         private SpecialMoveType     specialMoveType;
@@ -51,10 +52,11 @@ namespace Runtime.PlaySceneLogic
         private Vector2Int          previousTileIndex  = -Vector2Int.one;
         private IDisposable switchCamDispose;
         private int                 inTurnMoveCount;
+        
 
         [Inject]
         private void OnInit(ILogService logger, IScreenManager screen, PlaySceneCamera playCamera, TileSpawnerService tileSpawner, PieceSpawnerService pieceSpawner,
-            TileHighlighterService tileHighlighter, SignalBus signal)
+            TileHighlighterService tileHighlighter, SignalBus signal, FileManager fileManager)
         {
             this.logService             = logger;
             this.tileSpawnerService     = tileSpawner;
@@ -63,8 +65,10 @@ namespace Runtime.PlaySceneLogic
             this.signalBus              = signal;
             this.screenManager          = screen;
             this.playSceneCamera        = playCamera;
+            this.fileManager            = fileManager;
             this.switchCamDispose = this.isWhiteTurn.Subscribe(whiteTurn => this.playSceneCamera.SetMainCamera(whiteTurn));
         }
+
 
         private void OnEnable() { this.signalBus.Subscribe<OnMouseEnterSignal>(this.MovePiece); }
 

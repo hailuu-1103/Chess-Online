@@ -43,6 +43,11 @@ namespace Runtime.PlaySceneLogic.SpecialMoves
             if (targetPiece != null) targetPiece.Recycle();
             var currentTeam = this.boardController.GetPieceByIndex(this.currentPieceIndex).team;
             await this.screenManager.OpenScreen<PromotionPopUpPresenter, PromotionPopUpModel>(new PromotionPopUpModel(this.SpawnPromotionPiece, currentTeam));
+            this.boardController.MoveList.Add(new[]{
+                new Vector2Int(currentPieceIndex.x, currentPieceIndex.y),
+                new Vector2Int(targetPieceIndex.x, targetPieceIndex.y)
+            });
+            this.boardController.ChessMoveList.Add((currentPiece.team, PieceType.Pawn));
         }
 
         private async void SpawnPromotionPiece(PieceTeam pieceTeam, PieceType pieceType)
