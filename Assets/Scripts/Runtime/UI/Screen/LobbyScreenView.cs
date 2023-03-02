@@ -1,4 +1,4 @@
-namespace Runtime.UI
+namespace Runtime.UI.Screen
 {
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.View;

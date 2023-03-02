@@ -17,6 +17,6 @@ public class ChessOnlineSceneDirector : SceneDirector
     {
         public const string Loading   = "1.LoadingScene";
         public const string Main      = "2.MainScene";
-        public const string PlayScene = "3.PlayScene";
+        public const string PlayScene = "3.GameScene";
     }
 }

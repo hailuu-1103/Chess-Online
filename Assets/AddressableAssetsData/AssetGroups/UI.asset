@@ -37,6 +37,14 @@ MonoBehaviour:
     m_Address: GameResultPopupView
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 8a7a1f37a826353418238cd8a8ebf2ed
+    m_Address: MainScreenView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: f8aea0f9de83fd94c9d26cfd934d73b0
+    m_Address: ModeScreenView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 679620bf13a8f164ea2400b1335db13b, type: 2}
   m_SchemaSet:

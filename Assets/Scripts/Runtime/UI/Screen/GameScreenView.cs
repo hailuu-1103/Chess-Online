@@ -1,8 +1,7 @@
-namespace Runtime.UI
+namespace Runtime.UI.Screen
 {
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.View;
-    using GameFoundation.Scripts.Utilities.Extension;
     using Runtime.PlaySceneLogic;
     using TMPro;
     using UniRx;

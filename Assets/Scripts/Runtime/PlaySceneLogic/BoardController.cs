@@ -9,6 +9,7 @@ namespace Runtime.PlaySceneLogic
     using Runtime.PlaySceneLogic.ChessPiece;
     using Runtime.PlaySceneLogic.ChessTile;
     using Runtime.UI;
+    using Runtime.UI.Popup;
     using Ultility;
     using UniRx;
     using UnityEngine;

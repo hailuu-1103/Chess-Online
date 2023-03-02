@@ -9,7 +9,6 @@ namespace MultiplayerNetwork.Controller
         {
             this.Container.Bind<MultiplayerNetworkConfig>().FromScriptableObjectResource(nameof(MultiplayerNetworkConfig)).AsCached();
             this.Container.Bind<MapLoader>().FromNewComponentOnNewGameObject().AsCached().NonLazy();
-
         }
     }
 }

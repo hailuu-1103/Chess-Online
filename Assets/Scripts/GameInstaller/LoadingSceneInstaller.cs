@@ -2,7 +2,7 @@ namespace GameInstaller
 {
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using GameFoundation.Scripts.UIModule.Utilities;
-    using Runtime.UI;
+    using Runtime.UI.Screen;
 
     public class LoadingSceneInstaller : BaseSceneInstaller
     {

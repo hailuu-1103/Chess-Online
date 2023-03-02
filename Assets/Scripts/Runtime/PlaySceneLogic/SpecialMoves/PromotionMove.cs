@@ -5,6 +5,7 @@ namespace Runtime.PlaySceneLogic.SpecialMoves
     using GameFoundation.Scripts.Utilities.ObjectPool;
     using Runtime.PlaySceneLogic.ChessPiece;
     using Runtime.UI;
+    using Runtime.UI.Popup;
     using UnityEngine;
     using Zenject;
 

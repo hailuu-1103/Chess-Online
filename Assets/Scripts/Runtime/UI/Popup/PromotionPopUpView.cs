@@ -1,7 +1,6 @@
-namespace Runtime.UI
+namespace Runtime.UI.Popup
 {
     using System;
-    using System.Collections.Generic;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.View;
     using GameFoundation.Scripts.Utilities.LogService;
@@ -39,7 +38,6 @@ namespace Runtime.UI
     [PopupInfo(nameof(PromotionPopUpView), isCloseWhenTapOutside:false)]
     public class PromotionPopUpPresenter : BasePopupPresenter<PromotionPopUpView, PromotionPopUpModel>
     {
-        private          List<PromotionItemPresenter> promotionItemPresenters = new();
         private readonly DiContainer                  diContainer;
         private          PromotionPopUpModel          model;
         public PromotionPopUpPresenter(SignalBus signalBus, ILogService logService, DiContainer diContainer) : base(signalBus, logService) { this.diContainer = diContainer; }
