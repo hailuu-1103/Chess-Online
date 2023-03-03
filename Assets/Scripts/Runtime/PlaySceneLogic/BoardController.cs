@@ -42,6 +42,7 @@ namespace Runtime.PlaySceneLogic
         public GameObject[,] RuntimeTiles = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
         public BaseChessPiece[,] RuntimePieces = new BaseChessPiece[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
 
+        public string                               chessId = "";
         public BoolReactiveProperty                 isWhiteTurn = new(true);
         public List<Vector2Int[]>                   MoveList = new();
         public List<(PieceTeam, PieceType)>         ChessMoveList = new();
@@ -81,7 +82,12 @@ namespace Runtime.PlaySceneLogic
         private async void Start()
         {
             this.RuntimeTiles  = await this.tileSpawnerService.GenerateAllTiles(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.tileHolder);
-            this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder);
+            if(chessId == ""){
+                this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder);
+            } else {
+                var listChess = this.fileManager.getLastChessBoardById(chessId);
+                this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder, listChess);
+            }
         }
 
         private void MovePiece(OnMouseEnterSignal signal)

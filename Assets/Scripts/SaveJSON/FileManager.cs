@@ -116,6 +116,22 @@ public class FileManager : MonoBehaviour
         saveGameIds(GameResultStatus.NotFinish, PieceTeam.None);
     }
 
+    public List<PieceLog> getLastChessBoardById(string gameId){
+        var game = GameLogs.FirstOrDefault(g => g.Id == gameId);
+        if(game){
+            return JsonUtil.Load<List<PieceLog>>(saveFolder + gameId + ".last.json");
+        }
+        return null;
+    }
+
+    public List<PieceLog> getPieceLogById(string gameId){
+        var game = GameLogs.FirstOrDefault(g => g.Id == gameId);
+        if(game){
+            return JsonUtil.Load<List<PieceLog>>(saveFolder + gameId + ".log.json");
+        }
+        return null;
+    }
+
     private void Start()
     {
         saveFolder = Application.dataPath + "/Resources/SaveData/";

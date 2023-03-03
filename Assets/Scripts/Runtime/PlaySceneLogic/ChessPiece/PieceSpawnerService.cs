@@ -63,6 +63,31 @@ namespace Runtime.PlaySceneLogic.ChessPiece
             return pieces;
         }
 
+        public async UniTask<BaseChessPiece[,]> SpawnAllPieces(int boardRows, int boardColumn, Transform parent, List<PieceLog> listPiece)
+        {
+            var listTask = new List<UniTask<BaseChessPiece>>();
+            var pieces   = new BaseChessPiece[boardRows, boardColumn];
+            foreach (var piece in listChess){
+                int x = piece.StartPosition[0] - 'A';
+                int y = int.Parse(piece.StartPosition.Substring(1)) - 1;
+                listTask.Add(this.pieceSpawnerService.SpawnSinglePiece(
+                    parent, 
+                    (PieceType) Enum.Parse(typeof(PieceType), piece.PieceType),
+                    (PieceTeam) Enum.Parse(typeof(PieceTeam), piece.PieceTeam),
+                    x, 
+                    y
+                ));
+            }
+
+            var listBaseChess = await UniTask.WhenAll(listTask);
+            foreach (var baseChess in listBaseChess)
+            {
+                if(baseChess != null) pieces[baseChess.row, baseChess.col] = baseChess;
+            }
+
+            return pieces;
+        }
+
         public async UniTask<BaseChessPiece> SpawnSinglePiece(Transform parent, PieceType type, PieceTeam team, int x, int y)
         {
             if (type == PieceType.None) return null;
