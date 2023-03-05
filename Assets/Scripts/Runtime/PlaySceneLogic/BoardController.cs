@@ -146,11 +146,13 @@ namespace Runtime.PlaySceneLogic
                 else
                 {
                     this.logService.LogWithColor("Play error move sound here.", Color.yellow);
+                    AudioManager.Instance.PlaySFX("ErrorMove");
                 }
             }
             else
             {
                 this.logService.LogWithColor("Play error move sound here.", Color.yellow);
+                AudioManager.Instance.PlaySFX("ErrorMove");
             }
 
             if (this.inTurnMoveCount != 2) return;
@@ -294,6 +296,7 @@ namespace Runtime.PlaySceneLogic
         {
             if (!this.DetectCheck(opponentTeam)) return false;
             this.logService.LogWithColor("Play check sound here!", Color.yellow);
+            AudioManager.Instance.PlaySFX("CheckMate");
             var kingAvailableMoves = new List<Vector2Int>();
             var checkMovesIndex    = new List<Vector2Int>();
             var attackingPieces    = this.GetAllOpponentPiecesInBoard(this.RuntimePieces, opponentTeam);
