@@ -88,20 +88,23 @@ public class FileManager : MonoBehaviour
         JsonUtil.Save(pieceLogs, lastBoardSource);
     }
 
-    private void saveGameIds(GameResultStatus status, PieceTeam team)
+    private void saveGameIds(GameResultStatus status, PieceTeam team, float playerWhiteTimeRemaining, float playerBlackTimeRemaining)
     {
         GameLogs.Add(
             new GameLog(
                 FILE_KEY, 
                 DateTime.Now,
                 status,
-                team
+                team,
+                playerWhiteTimeRemaining,
+                playerBlackTimeRemaining
                 )
             );
         JsonUtil.Save(GameLogs, saveFolder + "game.json");
     }
 
-    public void saveData(List<Vector2Int[]> MoveList, List<(PieceTeam, PieceType)> ChessMoveList, BaseChessPiece[,] RuntimePieces)
+    public void saveData(List<Vector2Int[]> MoveList, List<(PieceTeam, PieceType)> ChessMoveList, BaseChessPiece[,] RuntimePieces, 
+        float playerWhiteTimeRemaining, float playerBlackTimeRemaining, GameResultStatus status = GameResultStatus.NotFinish, PieceTeam team = PieceTeam.None)
     {
 
         if (!Directory.Exists(saveFolder))
@@ -111,11 +114,21 @@ public class FileManager : MonoBehaviour
 
         saveMoveList(MoveList, ChessMoveList);
         saveLastBoard(RuntimePieces);
-        saveGameIds(GameResultStatus.NotFinish, PieceTeam.None);
+        saveGameIds(
+            status,
+            team, 
+            playerWhiteTimeRemaining,
+            playerBlackTimeRemaining
+            );
+    }
+
+    public GameLog getGameLog(string gameId)
+    {
+        return GameLogs.LastOrDefault(g => g.Id == gameId);
     }
 
     public List<PieceLog> getLastChessBoardById(string gameId){
-        var game = GameLogs.FirstOrDefault(g => g.Id == gameId);
+        var game = GameLogs.LastOrDefault(g => g.Id == gameId);
         if(game != null){
             return JsonUtil.Load<List<PieceLog>>(saveFolder + gameId + ".last.json");
         }
@@ -123,7 +136,7 @@ public class FileManager : MonoBehaviour
     }
 
     public List<PieceLog> getPieceLogById(string gameId){
-        var game = GameLogs.FirstOrDefault(g => g.Id == gameId);
+        var game = GameLogs.LastOrDefault(g => g.Id == gameId);
         if(game != null)
         {
             return JsonUtil.Load<List<PieceLog>>(saveFolder + gameId + ".log.json");
@@ -152,6 +165,11 @@ public class FileManager : MonoBehaviour
         }
 
         return (moveList, chessMoveList);
+    }
+
+    public void SetFileKey(string key)
+    {
+        FILE_KEY = key;
     }
 
     private void Start()

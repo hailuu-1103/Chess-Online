@@ -46,6 +46,9 @@ namespace Runtime.PlaySceneLogic
         public BoolReactiveProperty                 isWhiteTurn = new(true);
         public List<Vector2Int[]>                   MoveList = new();
         public List<(PieceTeam, PieceType)>         ChessMoveList = new();
+        public static float timeTotal = 300f;
+        public float playerWhiteTimeRemaining = timeTotal;
+        public float playerBlackTimeRemaining = timeTotal; 
 
         private List<Vector2Int>    pieceAvailableMovesIndex = new();
         private SpecialMoveType     specialMoveType;
@@ -85,20 +88,33 @@ namespace Runtime.PlaySceneLogic
             if(chessId == ""){
                 this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder);
             } else {
+                var game = this.fileManager.getGameLog(chessId);
+
                 var listChess = this.fileManager.getLastChessBoardById(chessId);
+                this.fileManager.SetFileKey(chessId);
                 this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder, listChess);
                 var pieceLogs = this.fileManager.getPieceLogById(chessId);
                 (MoveList, ChessMoveList) = this.fileManager.ConvertPieceLog(pieceLogs);
-                var lastMove = pieceLogs.Last();
-                isWhiteTurn = new (lastMove.PieceTeam != "White");
-                this.switchCamDispose = this.isWhiteTurn.Subscribe(whiteTurn => this.playSceneCamera.SetMainCamera(whiteTurn));
+
+                if (game.Status == GameResultStatus.NotFinish)
+                {
+                    var lastMove = pieceLogs.Last();
+                    isWhiteTurn = new(lastMove.PieceTeam != "White");
+                    this.switchCamDispose = this.isWhiteTurn.Subscribe(whiteTurn => this.playSceneCamera.SetMainCamera(whiteTurn));
+                    this.playerWhiteTimeRemaining = game.PlayerWhiteTimeRemaining;
+                    this.playerBlackTimeRemaining = game.PlayerBlackTimeRemaining;
+                } else
+                {
+                    // TO DO: Case load game finish
+                }
+                
             }
             Invoke("SaveData", 15f);
         }
 
-        private void SaveData()
+        private void SaveDataProcess()
         {
-            this.fileManager.saveData(MoveList, ChessMoveList, RuntimePieces);
+            this.fileManager.saveData(MoveList, ChessMoveList, RuntimePieces, playerWhiteTimeRemaining, playerBlackTimeRemaining);
         }
 
         private void MovePiece(OnMouseEnterSignal signal)
