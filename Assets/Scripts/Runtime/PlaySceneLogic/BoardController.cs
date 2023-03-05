@@ -112,7 +112,7 @@ namespace Runtime.PlaySceneLogic
                 }
                 
             }
-            Invoke("SaveData", 15f);
+            Invoke("SaveDataProcess", 15f);
         }
 
         private void SaveDataProcess()
