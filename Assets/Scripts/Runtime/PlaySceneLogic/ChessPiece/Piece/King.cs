@@ -17,11 +17,13 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
         public override List<Vector2Int> GetAvailableMoves(BaseChessPiece[,] chessboard)
         {
             var availableMoves = new List<Vector2Int>();
+            var runtimePieces  = this.boardController.RuntimePieces;
             for (var i = 0; i < 8; i++)
             {
                 var newX = this.row + this.moves[i, 0];
                 var newY = this.col + this.moves[i, 1];
                 if (newX < 0 || newY < 0 || newX > 7 || newY > 7) continue;
+                if (runtimePieces[newX, newY] != null && runtimePieces[newX, newY].team == this.team) continue;
                 availableMoves.Add(new Vector2Int(newX, newY));
             }
 

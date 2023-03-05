@@ -3,6 +3,7 @@ namespace Runtime.PlaySceneLogic
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using GameFoundation.Scripts.Utilities.LogService;
     using Runtime.Input.Signal;
@@ -50,13 +51,12 @@ namespace Runtime.PlaySceneLogic
         public float playerWhiteTimeRemaining = timeTotal;
         public float playerBlackTimeRemaining = timeTotal; 
 
-        private List<Vector2Int>    pieceAvailableMovesIndex = new();
-        private SpecialMoveType     specialMoveType;
-        private Vector2Int          currentlyTileIndex = -Vector2Int.one;
-        private Vector2Int          previousTileIndex  = -Vector2Int.one;
-        private IDisposable switchCamDispose;
-        private int                 inTurnMoveCount;
-        
+        private List<Vector2Int> pieceAvailableMovesIndex = new();
+        private SpecialMoveType  specialMoveType;
+        private Vector2Int       currentlyTileIndex = -Vector2Int.one;
+        private Vector2Int       previousTileIndex  = -Vector2Int.one;
+        private IDisposable      switchCamDispose;
+        private int              inTurnMoveCount;
 
         [Inject]
         private void OnInit(ILogService logger, IScreenManager screen, PlaySceneCamera playCamera, TileSpawnerService tileSpawner, PieceSpawnerService pieceSpawner,
@@ -70,7 +70,10 @@ namespace Runtime.PlaySceneLogic
             this.screenManager          = screen;
             this.playSceneCamera        = playCamera;
             this.fileManager            = fileManager;
-            this.switchCamDispose = this.isWhiteTurn.Subscribe(whiteTurn => this.playSceneCamera.SetMainCamera(whiteTurn));
+            this.switchCamDispose       = this.isWhiteTurn.Subscribe(whiteTurn =>
+            {
+                this.playSceneCamera.SetMainCamera(whiteTurn);
+            });
         }
 
 
@@ -126,8 +129,8 @@ namespace Runtime.PlaySceneLogic
                 if (this.inTurnMoveCount != 1)
                     this.pieceAvailableMovesIndex = currentPiece.GetAvailableMoves(this.RuntimePieces);
                 this.tileHighlighterService.HighlightAvailableMoveTiles(this.pieceAvailableMovesIndex.Select(this.GetTileByIndex).ToList());
-                var preMoveTile = this.GetPreMoveTiles(currentPiece);
-                if (preMoveTile.Count > 0) this.tileHighlighterService.HighlightPreMoveTiles(preMoveTile);
+                // var preMoveTile = this.GetPreMoveTiles(currentPiece);
+                // if (preMoveTile.Count > 0) this.tileHighlighterService.HighlightPreMoveTiles(preMoveTile);
             }
 
             this.previousTileIndex =  this.currentlyTileIndex;
@@ -168,22 +171,24 @@ namespace Runtime.PlaySceneLogic
                         this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(currentPiece.team, GameResultStatus.Win, "Checkmate!"));
                     }
 
-                    // if (this.DetectDraw(opponentTeam, out var drawCause))
-                    // {
-                    //     this.logService.LogWithColor("Draw! ", Color.red);
-                    //     this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(currentPiece.team, GameResultStatus.Draw, drawCause));
-                    // }
+                    if (this.DetectDraw(opponentTeam, out var drawCause))
+                    {
+                        this.logService.LogWithColor("Draw! ", Color.red);
+                        this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(currentPiece.team, GameResultStatus.Draw, drawCause));
+                    }
 
                     this.isWhiteTurn.Value = !this.isWhiteTurn.Value;
                 }
                 else
                 {
                     this.logService.LogWithColor("Play error move sound here.", Color.yellow);
+                    AudioManager.Instance.PlaySFX("ErrorMove");
                 }
             }
             else
             {
                 this.logService.LogWithColor("Play error move sound here.", Color.yellow);
+                AudioManager.Instance.PlaySFX("ErrorMove");
             }
 
             if (this.inTurnMoveCount != 2) return;
@@ -327,6 +332,7 @@ namespace Runtime.PlaySceneLogic
         {
             if (!this.DetectCheck(opponentTeam)) return false;
             this.logService.LogWithColor("Play check sound here!", Color.yellow);
+            AudioManager.Instance.PlaySFX("CheckMate");
             var kingAvailableMoves = new List<Vector2Int>();
             var checkMovesIndex    = new List<Vector2Int>();
             var attackingPieces    = this.GetAllOpponentPiecesInBoard(this.RuntimePieces, opponentTeam);
