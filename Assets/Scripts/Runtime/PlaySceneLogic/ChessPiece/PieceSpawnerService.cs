@@ -67,10 +67,11 @@ namespace Runtime.PlaySceneLogic.ChessPiece
         {
             var listTask = new List<UniTask<BaseChessPiece>>();
             var pieces   = new BaseChessPiece[boardRows, boardColumn];
-            foreach (var piece in listChess){
+            foreach (var piece in listPiece)
+            {
                 int x = piece.StartPosition[0] - 'A';
                 int y = int.Parse(piece.StartPosition.Substring(1)) - 1;
-                listTask.Add(this.pieceSpawnerService.SpawnSinglePiece(
+                listTask.Add(this.SpawnSinglePiece(
                     parent, 
                     (PieceType) Enum.Parse(typeof(PieceType), piece.PieceType),
                     (PieceTeam) Enum.Parse(typeof(PieceTeam), piece.PieceTeam),

@@ -33,7 +33,6 @@
         {
             if (!File.Exists(path))
             {
-                throw new System.Exception(path);
                 return new T();
             }
             var stream = new StreamReader(path);

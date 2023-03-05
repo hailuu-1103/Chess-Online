@@ -87,7 +87,18 @@ namespace Runtime.PlaySceneLogic
             } else {
                 var listChess = this.fileManager.getLastChessBoardById(chessId);
                 this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder, listChess);
+                var pieceLogs = this.fileManager.getPieceLogById(chessId);
+                (MoveList, ChessMoveList) = this.fileManager.ConvertPieceLog(pieceLogs);
+                var lastMove = pieceLogs.Last();
+                isWhiteTurn = new (lastMove.PieceTeam != "White");
+                this.switchCamDispose = this.isWhiteTurn.Subscribe(whiteTurn => this.playSceneCamera.SetMainCamera(whiteTurn));
             }
+            Invoke("SaveData", 15f);
+        }
+
+        private void SaveData()
+        {
+            this.fileManager.saveData(MoveList, ChessMoveList, RuntimePieces);
         }
 
         private void MovePiece(OnMouseEnterSignal signal)
