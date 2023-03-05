@@ -56,6 +56,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece
         {
             this.transform.DOMove(targetTile.transform.position, GameStaticValue.MoveDuration);
             this.logService.LogWithColor("Play move sound here", Color.yellow);
+            AudioManager.Instance.PlaySFX("Move");
             var targetTileIndex = this.boardController.GetTileIndex(targetTile);
             this.ReplaceData(targetTileIndex.x, targetTileIndex.y);
             var targetPiece = this.boardController.GetPieceByIndex(this.boardController.GetTileIndex(targetTile));
@@ -64,6 +65,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece
             if (targetPiece != null)
             {
                 this.logService.LogWithColor("Play kill sound here", Color.yellow);
+                AudioManager.Instance.PlaySFX("Kill");
                 targetPiece.Recycle();
             }
 
