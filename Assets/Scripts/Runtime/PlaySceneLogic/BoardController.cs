@@ -57,6 +57,8 @@ namespace Runtime.PlaySceneLogic
         private Vector2Int       previousTileIndex  = -Vector2Int.one;
         private IDisposable      switchCamDispose;
         private int              inTurnMoveCount;
+        private GameResultStatus result             = GameResultStatus.NotFinish;
+        private PieceTeam        winTeam            = PieceTeam.None;
 
         [Inject]
         private void OnInit(ILogService logger, IScreenManager screen, PlaySceneCamera playCamera, TileSpawnerService tileSpawner, PieceSpawnerService pieceSpawner,
@@ -112,12 +114,12 @@ namespace Runtime.PlaySceneLogic
                 }
                 
             }
-            Invoke("SaveDataProcess", 15f);
         }
 
-        private void SaveDataProcess()
+        private void OnApplicationQuit()
         {
-            this.fileManager.saveData(MoveList, ChessMoveList, RuntimePieces, playerWhiteTimeRemaining, playerBlackTimeRemaining);
+            if (result == GameResultStatus.NotFinish)
+                this.fileManager.saveData(MoveList, ChessMoveList, RuntimePieces, playerWhiteTimeRemaining, playerBlackTimeRemaining);
         }
 
         private void MovePiece(OnMouseEnterSignal signal)
@@ -168,13 +170,19 @@ namespace Runtime.PlaySceneLogic
                     if (this.DetectCheckmate(opponentTeam))
                     {
                         this.logService.LogWithColor("Check mate! ", Color.red);
-                        this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(currentPiece.team, GameResultStatus.Win, "Checkmate!"));
+                        winTeam = currentPiece.team;
+                        result = GameResultStatus.Win;
+                        this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(winTeam, result, "Checkmate!"));
+                        this.fileManager.saveData(MoveList, ChessMoveList, RuntimePieces, playerWhiteTimeRemaining, playerBlackTimeRemaining, result, winTeam);
                     }
 
                     if (this.DetectDraw(opponentTeam, out var drawCause))
                     {
                         this.logService.LogWithColor("Draw! ", Color.red);
-                        this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(currentPiece.team, GameResultStatus.Draw, drawCause));
+                        winTeam = currentPiece.team;
+                        result = GameResultStatus.Draw;
+                        this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(winTeam, result, drawCause));
+                        this.fileManager.saveData(MoveList, ChessMoveList, RuntimePieces, playerWhiteTimeRemaining, playerBlackTimeRemaining, result, winTeam);
                     }
 
                     this.isWhiteTurn.Value = !this.isWhiteTurn.Value;
