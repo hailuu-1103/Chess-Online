@@ -2,6 +2,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Cysharp.Threading.Tasks;
     using GameFoundation.Scripts.AssetLibrary;
     using GameFoundation.Scripts.Utilities.ObjectPool;
@@ -65,20 +66,8 @@ namespace Runtime.PlaySceneLogic.ChessPiece
 
         public async UniTask<BaseChessPiece[,]> SpawnAllPieces(int boardRows, int boardColumn, Transform parent, List<PieceLog> listPiece)
         {
-            var listTask = new List<UniTask<BaseChessPiece>>();
             var pieces   = new BaseChessPiece[boardRows, boardColumn];
-            foreach (var piece in listPiece)
-            {
-                int x = piece.StartPosition[0] - 'A';
-                int y = int.Parse(piece.StartPosition.Substring(1)) - 1;
-                listTask.Add(this.SpawnSinglePiece(
-                    parent, 
-                    (PieceType) Enum.Parse(typeof(PieceType), piece.PieceType),
-                    (PieceTeam) Enum.Parse(typeof(PieceTeam), piece.PieceTeam),
-                    x, 
-                    y
-                ));
-            }
+            var listTask = (from piece in listPiece let x = piece.StartPosition[0] - 'A' let y = int.Parse(piece.StartPosition[1..]) - 1 select this.SpawnSinglePiece(parent, (PieceType)Enum.Parse(typeof(PieceType), piece.PieceType), (PieceTeam)Enum.Parse(typeof(PieceTeam), piece.PieceTeam), x, y)).ToList();
 
             var listBaseChess = await UniTask.WhenAll(listTask);
             foreach (var baseChess in listBaseChess)

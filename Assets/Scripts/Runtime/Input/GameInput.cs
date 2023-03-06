@@ -40,32 +40,12 @@ namespace Runtime.Input
 
             if (this.boardController.isWhiteTurn.Value)
             {
-                this.boardController.playerWhiteTimeRemaining -= Time.deltaTime;
-/*                UpdateTimer(
-                    this.boardController.playerWhiteTimeRemaining,
-                    playerWhiteTimeText
-                    );*/
+                this.boardController.playerWhiteTimeRemaining.Value -= Time.deltaTime;
             }
             else
             {
-                this.boardController.playerBlackTimeRemaining -= Time.deltaTime;
-/*                UpdateTimer(
-                    this.boardController.playerBlackTimeRemaining,
-                    playerBlackTimeText
-                    );*/
+                this.boardController.playerBlackTimeRemaining.Value -= Time.deltaTime;
             }
         }
-
-        void UpdateTimer(float timeRemaining, TextMeshPro timerText)
-        {
-            // Convert the time remaining to minutes and seconds
-            int minutes = Mathf.FloorToInt(timeRemaining / 60f);
-            int seconds = Mathf.FloorToInt(timeRemaining % 60f);
-
-            // Update the timer text
-            timerText.text = string.Format("{0:0}:{1:00}", minutes, seconds);
-        }
-
-        
     }
 }

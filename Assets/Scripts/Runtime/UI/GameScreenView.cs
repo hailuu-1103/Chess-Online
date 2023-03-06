@@ -2,18 +2,22 @@ namespace Runtime.UI
 {
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.View;
-    using GameFoundation.Scripts.Utilities.Extension;
     using Runtime.PlaySceneLogic;
     using TMPro;
     using UniRx;
     using UnityEngine;
+    using Utils;
     using Zenject;
 
     public class GameScreenView : BaseView
     {
         [SerializeField] private TextMeshProUGUI txtTeamTurn;
+        [SerializeField] private TextMeshProUGUI txtWhiteTime;
+        [SerializeField] private TextMeshProUGUI txtBlackTime;
 
-        public TextMeshProUGUI TxtTeamTurn => this.txtTeamTurn;
+        public TextMeshProUGUI TxtTeamTurn  => this.txtTeamTurn;
+        public TextMeshProUGUI TxtWhiteTime => this.txtWhiteTime;
+        public TextMeshProUGUI TxtBlackTime => this.txtBlackTime;
     }
 
     [ScreenInfo(nameof(GameScreenView))]
@@ -33,12 +37,11 @@ namespace Runtime.UI
         public override void BindData()
         {
             this.InitView();
+            this.compositeDisposable.Add(this.boardController.playerBlackTimeRemaining.Subscribe(time => { this.View.TxtBlackTime.SetRemainTime(time); }));
+            this.compositeDisposable.Add(this.boardController.playerWhiteTimeRemaining.Subscribe(time => { this.View.TxtWhiteTime.SetRemainTime(time); }));
         }
 
-        private void InitView()
-        {
-            this.compositeDisposable.Add(this.boardController.isWhiteTurn.Subscribe(isWhiteTurn => { this.View.TxtTeamTurn.text = isWhiteTurn ? "White" : "Black"; }));
-        }
+        private void InitView() { this.compositeDisposable.Add(this.boardController.isWhiteTurn.Subscribe(isWhiteTurn => { this.View.TxtTeamTurn.text = isWhiteTurn ? "White" : "Black"; })); }
 
         public override void Dispose()
         {

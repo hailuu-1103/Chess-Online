@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028429, g: 0.22571439, b: 0.30692345, a: 1}
+  m_IndirectSpecularColor: {r: 0.1802838, g: 0.22571367, b: 0.30692244, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1230,7 +1230,7 @@ PrefabInstance:
     - target: {fileID: 2671358120995579950, guid: af8b306af4745484b961a978d57ad408,
         type: 3}
       propertyPath: chessId
-      value: 5APGAWAMPK
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6946845032065313828, guid: af8b306af4745484b961a978d57ad408,
         type: 3}
