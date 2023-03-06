@@ -2,13 +2,17 @@ namespace Runtime.PlaySceneLogic.SpecialMoves
 {
     using System;
     using DG.Tweening;
+    using Runtime.PlaySceneLogic.ChessPiece;
     using UnityEngine;
+    using static DG.Tweening.DOTweenAnimation;
 
     public class CastlingMove : ISpecialMoves
     {
         private readonly BoardController boardController;
 
-        public CastlingMove(BoardController boardController) { this.boardController = boardController; }
+        public CastlingMove(BoardController boardController) { 
+            this.boardController = boardController;
+        }
 
         public void Execute(Vector2Int currentPieceIndex, Vector2Int targetPieceIndex)
         {
@@ -36,6 +40,14 @@ namespace Runtime.PlaySceneLogic.SpecialMoves
 
             var rookTargetIndex = new Vector2Int(newRookX, kingY);
             var kingTargetIndex = new Vector2Int(newKingX, kingY);
+
+            this.boardController.MoveList.Add(new[]
+                { new Vector2Int(currentPieceIndex.x, kingY), new Vector2Int(newKingX, kingY) });
+            this.boardController.ChessMoveList.Add((kingPiece.team, PieceType.King));
+
+            this.boardController.MoveList.Add(new[]
+                { new Vector2Int(rookX, kingY), new Vector2Int(newRookX, kingY) });
+            this.boardController.ChessMoveList.Add((kingPiece.team, PieceType.Castle));
 
             rookPiece.transform.DOMove(this.boardController.GetTileByIndex(rookTargetIndex).transform.position, GameStaticValue.MoveDuration);
             kingPiece.transform.DOMove(this.boardController.GetTileByIndex(kingTargetIndex).transform.position, GameStaticValue.MoveDuration);

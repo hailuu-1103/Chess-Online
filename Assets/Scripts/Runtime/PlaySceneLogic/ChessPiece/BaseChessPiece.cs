@@ -71,12 +71,13 @@ namespace Runtime.PlaySceneLogic.ChessPiece
 
             this.boardController.MoveList.Add(new[]
                 { new Vector2Int(currentPieceIndex.x, currentPieceIndex.y), new Vector2Int(this.boardController.GetTileIndex(targetTile).x, this.boardController.GetTileIndex(targetTile).y) });
+            this.boardController.ChessMoveList.Add((team, type));
         }
 
         public virtual SpecialMoveType GetSpecialMoveType(BaseChessPiece currentPiece, ref List<Vector2Int> availableMoves, Vector2Int targetTileIndex) { return SpecialMoveType.None; }
 
         public virtual void PerformSpecialMove(Vector2Int currentPieceIndex, Vector2Int targetPieceIndex)
-        { 
+        {
             this.specialMoves.Execute(currentPieceIndex, targetPieceIndex);
         }
     }

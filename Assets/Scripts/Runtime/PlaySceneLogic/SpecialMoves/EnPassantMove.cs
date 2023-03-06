@@ -19,8 +19,13 @@ namespace Runtime.PlaySceneLogic.SpecialMoves
             currentPiece.transform.DOMove(targetTile.transform.position, GameStaticValue.MoveDuration);
             currentPiece.ReplaceData(targetPieceIndex.x, targetPieceIndex.y);
             this.boardController.RuntimePieces[targetPawn.row, targetPawn.col] = null;
-            this.boardController.MoveList.Add(new[]
-                { new Vector2Int(currentPieceIndex.x, currentPieceIndex.y), new Vector2Int(this.boardController.GetTileIndex(targetTile).x, this.boardController.GetTileIndex(targetTile).y) });
+
+            this.boardController.MoveList.Add(new[]{ 
+                new Vector2Int(currentPieceIndex.x, currentPieceIndex.y), 
+                new Vector2Int(this.boardController.GetTileIndex(targetTile).x, this.boardController.GetTileIndex(targetTile).y) 
+            });
+            this.boardController.ChessMoveList.Add((currentPiece.team, PieceType.Pawn));
+
             if (targetPawn != null)
             {
                 targetPawn.Recycle();

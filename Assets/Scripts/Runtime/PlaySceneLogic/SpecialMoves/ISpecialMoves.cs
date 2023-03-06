@@ -1,5 +1,6 @@
 namespace Runtime.PlaySceneLogic.SpecialMoves
 {
+    using Runtime.PlaySceneLogic.ChessPiece;
     using UnityEngine;
 
     public interface ISpecialMoves

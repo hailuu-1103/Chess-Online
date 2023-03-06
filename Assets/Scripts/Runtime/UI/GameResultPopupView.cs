@@ -13,7 +13,8 @@ namespace Runtime.UI
     {
         Win,
         Lose,
-        Draw
+        Draw,
+        NotFinish
     }
 
     public class GameResultPopupModel

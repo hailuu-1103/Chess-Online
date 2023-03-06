@@ -22,7 +22,7 @@ namespace GameInstaller
             base.InstallBindings();
             this.Container.Bind<Transform>().FromInstance(this.pieceHolder).AsCached();
             this.Container.Bind<PlaySceneCamera>().FromInstance(this.playSceneCamera).AsCached();
-
+            this.Container.Bind<FileManager>().FromComponentInHierarchy().AsCached();
             this.Container.Bind<TileSpawnerService>().AsCached().NonLazy();
             this.Container.Bind<TileHighlighterService>().AsCached().NonLazy();
             this.Container.Bind<PieceSpawnerService>().AsCached().NonLazy();

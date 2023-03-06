@@ -27,24 +27,29 @@ namespace Runtime.PlaySceneLogic
     {
         #region inject
 
-        private ILogService            logService;
-        private TileSpawnerService     tileSpawnerService;
+        private ILogService logService;
+        private TileSpawnerService tileSpawnerService;
         private TileHighlighterService tileHighlighterService;
-        private PlaySceneCamera        playSceneCamera;
-        private PieceSpawnerService    pieceSpawnerService;
-        private SignalBus              signalBus;
-        private IScreenManager         screenManager;
-
+        private PlaySceneCamera playSceneCamera;
+        private PieceSpawnerService pieceSpawnerService;
+        private SignalBus signalBus;
+        private IScreenManager screenManager;
+        private FileManager fileManager;
         #endregion
 
         [SerializeField] private Transform tileHolder;
-        [Inject]         private Transform pieceHolder;
+        [Inject] private Transform pieceHolder;
 
-        public GameObject[,]     RuntimeTiles  = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
+        public GameObject[,] RuntimeTiles = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
         public BaseChessPiece[,] RuntimePieces = new BaseChessPiece[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
 
-        public BoolReactiveProperty isWhiteTurn = new(true);
-        public List<Vector2Int[]>   MoveList    = new();
+        public string                               chessId = "";
+        public BoolReactiveProperty                 isWhiteTurn = new(true);
+        public List<Vector2Int[]>                   MoveList = new();
+        public List<(PieceTeam, PieceType)>         ChessMoveList = new();
+        public static float timeTotal = 300f;
+        public float playerWhiteTimeRemaining = timeTotal;
+        public float playerBlackTimeRemaining = timeTotal; 
 
         private List<Vector2Int> pieceAvailableMovesIndex = new();
         private SpecialMoveType  specialMoveType;
@@ -52,10 +57,12 @@ namespace Runtime.PlaySceneLogic
         private Vector2Int       previousTileIndex  = -Vector2Int.one;
         private IDisposable      switchCamDispose;
         private int              inTurnMoveCount;
+        private GameResultStatus result             = GameResultStatus.NotFinish;
+        private PieceTeam        winTeam            = PieceTeam.None;
 
         [Inject]
         private void OnInit(ILogService logger, IScreenManager screen, PlaySceneCamera playCamera, TileSpawnerService tileSpawner, PieceSpawnerService pieceSpawner,
-            TileHighlighterService tileHighlighter, SignalBus signal)
+            TileHighlighterService tileHighlighter, SignalBus signal, FileManager fileManager)
         {
             this.logService             = logger;
             this.tileSpawnerService     = tileSpawner;
@@ -64,11 +71,13 @@ namespace Runtime.PlaySceneLogic
             this.signalBus              = signal;
             this.screenManager          = screen;
             this.playSceneCamera        = playCamera;
+            this.fileManager            = fileManager;
             this.switchCamDispose       = this.isWhiteTurn.Subscribe(whiteTurn =>
             {
                 this.playSceneCamera.SetMainCamera(whiteTurn);
             });
         }
+
 
         private void OnEnable() { this.signalBus.Subscribe<OnMouseEnterSignal>(this.MovePiece); }
 
@@ -81,7 +90,36 @@ namespace Runtime.PlaySceneLogic
         private async void Start()
         {
             this.RuntimeTiles  = await this.tileSpawnerService.GenerateAllTiles(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.tileHolder);
-            this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder);
+            if(chessId == ""){
+                this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder);
+            } else {
+                var game = this.fileManager.getGameLog(chessId);
+
+                var listChess = this.fileManager.getLastChessBoardById(chessId);
+                this.fileManager.SetFileKey(chessId);
+                this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder, listChess);
+                var pieceLogs = this.fileManager.getPieceLogById(chessId);
+                (MoveList, ChessMoveList) = this.fileManager.ConvertPieceLog(pieceLogs);
+
+                if (game.Status == GameResultStatus.NotFinish)
+                {
+                    var lastMove = pieceLogs.Last();
+                    isWhiteTurn = new(lastMove.PieceTeam != "White");
+                    this.switchCamDispose = this.isWhiteTurn.Subscribe(whiteTurn => this.playSceneCamera.SetMainCamera(whiteTurn));
+                    this.playerWhiteTimeRemaining = game.PlayerWhiteTimeRemaining;
+                    this.playerBlackTimeRemaining = game.PlayerBlackTimeRemaining;
+                } else
+                {
+                    // TO DO: Case load game finish
+                }
+                
+            }
+        }
+
+        private void OnApplicationQuit()
+        {
+            if (result == GameResultStatus.NotFinish)
+                this.fileManager.saveData(MoveList, ChessMoveList, RuntimePieces, playerWhiteTimeRemaining, playerBlackTimeRemaining);
         }
 
         private void MovePiece(OnMouseEnterSignal signal)
@@ -132,13 +170,19 @@ namespace Runtime.PlaySceneLogic
                     if (this.DetectCheckmate(opponentTeam))
                     {
                         this.logService.LogWithColor("Check mate! ", Color.red);
-                        this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(currentPiece.team, GameResultStatus.Win, "Checkmate!"));
+                        winTeam = currentPiece.team;
+                        result = GameResultStatus.Win;
+                        this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(winTeam, result, "Checkmate!"));
+                        this.fileManager.saveData(MoveList, ChessMoveList, RuntimePieces, playerWhiteTimeRemaining, playerBlackTimeRemaining, result, winTeam);
                     }
 
                     if (this.DetectDraw(opponentTeam, out var drawCause))
                     {
                         this.logService.LogWithColor("Draw! ", Color.red);
-                        this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(currentPiece.team, GameResultStatus.Draw, drawCause));
+                        winTeam = currentPiece.team;
+                        result = GameResultStatus.Draw;
+                        this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(winTeam, result, drawCause));
+                        this.fileManager.saveData(MoveList, ChessMoveList, RuntimePieces, playerWhiteTimeRemaining, playerBlackTimeRemaining, result, winTeam);
                     }
 
                     this.isWhiteTurn.Value = !this.isWhiteTurn.Value;
