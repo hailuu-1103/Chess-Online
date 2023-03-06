@@ -18,7 +18,7 @@ MonoBehaviour:
   m_GUID: 9b9ba9b31054544439d8a74d3c42c89d
   m_SerializeEntries:
   - m_GUID: 5bf33171a7890405fadd9ba6c341d086
-    m_Address: queen_black
+    m_Address: queen_Black
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 8dde74c05b5674a6b96e6c855da9dc82

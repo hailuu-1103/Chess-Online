@@ -2,6 +2,8 @@ namespace Runtime.UI
 {
     using System;
     using System.Collections.Generic;
+    using Cysharp.Threading.Tasks;
+    using GameFoundation.Scripts.AssetLibrary;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.View;
     using GameFoundation.Scripts.Utilities.LogService;
@@ -39,10 +41,13 @@ namespace Runtime.UI
     [PopupInfo(nameof(PromotionPopUpView), isCloseWhenTapOutside:false)]
     public class PromotionPopUpPresenter : BasePopupPresenter<PromotionPopUpView, PromotionPopUpModel>
     {
+        private IGameAssets gameAssets;
         private          List<PromotionItemPresenter> promotionItemPresenters = new();
         private readonly DiContainer                  diContainer;
         private          PromotionPopUpModel          model;
-        public PromotionPopUpPresenter(SignalBus signalBus, ILogService logService, DiContainer diContainer) : base(signalBus, logService) { this.diContainer = diContainer; }
+        public PromotionPopUpPresenter(SignalBus signalBus, ILogService logService, IGameAssets gameAssets, DiContainer diContainer) : base(signalBus, logService) {
+            this.gameAssets = gameAssets;
+            this.diContainer = diContainer; }
 
         protected override void OnViewReady()
         {
@@ -58,8 +63,18 @@ namespace Runtime.UI
             this.View.BtnKnightPromotion.onClick.AddListener(this.OnClickKnightPromotion);
         }
 
-        public override void BindData(PromotionPopUpModel popUpModel) { this.model = popUpModel; }
-
+        public override void BindData(PromotionPopUpModel popUpModel) 
+        { 
+            this.model = popUpModel;
+            setView();
+        }
+        public async void setView()
+        {
+            this.View.BtnQueenPromotion.image.sprite = await this.gameAssets.LoadAssetAsync<Sprite>($"queen_{this.model.PieceTeam}");
+            this.View.BtnBishopPromotion.image.sprite = await this.gameAssets.LoadAssetAsync<Sprite>($"bishop_{this.model.PieceTeam}");
+            this.View.BtnKnightPromotion.image.sprite = await this.gameAssets.LoadAssetAsync<Sprite>($"knight_{this.model.PieceTeam}");
+            this.View.BtnRookPromotion.image.sprite = await this.gameAssets.LoadAssetAsync<Sprite>($"rook_{this.model.PieceTeam}");
+        }
         private async void OnClickQueenPromotion()
         {
             await this.CloseViewAsync();
