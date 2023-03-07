@@ -7,6 +7,7 @@ namespace Runtime.UI
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.Presenter;
     using GameFoundation.Scripts.UIModule.ScreenFlow.BaseScreen.View;
     using GameFoundation.Scripts.Utilities.LogService;
+    using Runtime.Input;
     using Runtime.PlaySceneLogic.ChessPiece;
     using UnityEngine;
     using UnityEngine.UI;
@@ -38,21 +39,30 @@ namespace Runtime.UI
         public                   Button BtnClose           => this.btnClose;
     }
 
-    [PopupInfo(nameof(PromotionPopUpView), isCloseWhenTapOutside:false)]
+    [PopupInfo(nameof(PromotionPopUpView), isEnableBlur: false, isCloseWhenTapOutside:false)]
     public class PromotionPopUpPresenter : BasePopupPresenter<PromotionPopUpView, PromotionPopUpModel>
     {
-        private IGameAssets gameAssets;
+        #region inject
+
+        private readonly DiContainer diContainer;
+        private readonly GameInput gameInput;
+        
+        #endregion
+
+        private readonly IGameAssets gameAssets;
         private          List<PromotionItemPresenter> promotionItemPresenters = new();
-        private readonly DiContainer                  diContainer;
         private          PromotionPopUpModel          model;
-        public PromotionPopUpPresenter(SignalBus signalBus, ILogService logService, IGameAssets gameAssets, DiContainer diContainer) : base(signalBus, logService) {
+        public PromotionPopUpPresenter(SignalBus signalBus, ILogService logService, IGameAssets gameAssets, DiContainer diContainer, GameInput input) : base(signalBus, logService) {
             this.gameAssets = gameAssets;
-            this.diContainer = diContainer; }
+            this.diContainer = diContainer;
+            this.gameInput = input;
+        }
 
         protected override void OnViewReady()
         {
             base.OnViewReady();
             this.InitButtonListener();
+            this.gameInput.IsBlockInput = true;
         }
 
         private void InitButtonListener()
@@ -79,24 +89,28 @@ namespace Runtime.UI
         {
             await this.CloseViewAsync();
             this.model.OnSelectComplete?.Invoke(this.model.PieceTeam, PieceType.Queen);
+            this.gameInput.IsBlockInput = false;
         }
 
         private async void OnClickRookPromotion()
         {
             await this.CloseViewAsync();
             this.model.OnSelectComplete?.Invoke(this.model.PieceTeam, PieceType.Castle);
+            this.gameInput.IsBlockInput = false;
         }
 
         private async void OnClickBishopPromotion()
         {
             await this.CloseViewAsync();
             this.model.OnSelectComplete?.Invoke(this.model.PieceTeam, PieceType.Bishop);
+            this.gameInput.IsBlockInput = false;
         }
 
         private async void OnClickKnightPromotion()
         {
             await this.CloseViewAsync();
             this.model.OnSelectComplete?.Invoke(this.model.PieceTeam, PieceType.Knight);
+            this.gameInput.IsBlockInput = false;
         }
     }
 }
