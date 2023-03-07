@@ -6,7 +6,6 @@ namespace GameInstaller
     using Runtime.PlaySceneLogic;
     using Runtime.PlaySceneLogic.ChessPiece;
     using Runtime.PlaySceneLogic.ChessTile;
-    using Runtime.PlaySceneLogic.Signal;
     using Runtime.PlaySceneLogic.SpecialMoves;
     using Runtime.UI;
     using UnityEngine;
@@ -41,7 +40,7 @@ namespace GameInstaller
         {
             diContainer.DeclareSignal<OnMouseEnterSignal>();
             diContainer.DeclareSignal<OnMouseReleaseSignal>();
-            diContainer.DeclareSignal<OnCheckSignal>();
+            diContainer.DeclareSignal<OutOfTimeSignal>();
         }
     }
 }

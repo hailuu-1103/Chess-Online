@@ -25,7 +25,7 @@ namespace Runtime.UI
     {
         private readonly BoardController boardController;
 
-        private CompositeDisposable compositeDisposable = new();
+        private CompositeDisposable compositeDisposable;
         public GameScreenPresenter(SignalBus signalBus, BoardController boardController) : base(signalBus) { this.boardController = boardController; }
 
         protected override void OnViewReady()
@@ -36,6 +36,7 @@ namespace Runtime.UI
 
         public override void BindData()
         {
+            this.compositeDisposable = new CompositeDisposable();
             this.InitView();
             this.compositeDisposable.Add(this.boardController.playerBlackTimeRemaining.Subscribe(time => { this.View.TxtBlackTime.SetRemainTime(time); }));
             this.compositeDisposable.Add(this.boardController.playerWhiteTimeRemaining.Subscribe(time => { this.View.TxtWhiteTime.SetRemainTime(time); }));

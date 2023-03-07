@@ -88,7 +88,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
                 (this.team == PieceTeam.Black && currentPieceIndex.y == 1 && targetTileIndex.y == 0))
             {
                 availableMoves.Add(new Vector2Int(currentPieceIndex.x, this.team == PieceTeam.White ? 7 : 0));
-                this.specialMoves = new PromotionMove(this.screenManager, this.boardController, this.pieceSpawnerService);
+                this.specialMoves = new PromotionMove(this.screenManager, this.pieceHolder, this.boardController, this.pieceSpawnerService);
                 specialMoveType   = SpecialMoveType.Promotion;
             }
 
@@ -100,7 +100,8 @@ namespace Runtime.PlaySceneLogic.ChessPiece.Piece
         {
             if (this.specialMoves is PromotionMove)
             {
-            }            
+            }
+
             base.PerformSpecialMove(currentPieceIndex, targetPieceIndex);
         }
     }

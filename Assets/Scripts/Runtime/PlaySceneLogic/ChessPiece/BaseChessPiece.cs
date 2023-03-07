@@ -25,13 +25,15 @@ namespace Runtime.PlaySceneLogic.ChessPiece
         protected ISpecialMoves          specialMoves;
         protected IScreenManager         screenManager;
         protected PieceSpawnerService    pieceSpawnerService;
+        protected Transform              pieceHolder;
 
         #endregion
 
         [Inject]
-        private void Init(SignalBus signal, BoardController controller, ILogService service, ISpecialMoves special, IScreenManager screen, PieceRegularMoveHelper helper,
+        private void Init(SignalBus signal, BoardController controller, Transform holder, ILogService service, ISpecialMoves special, IScreenManager screen, PieceRegularMoveHelper helper,
             PieceSpawnerService pieceSpawner)
         {
+            this.pieceHolder            = holder;
             this.signalBus              = signal;
             this.boardController        = controller;
             this.logService             = service;
@@ -42,7 +44,9 @@ namespace Runtime.PlaySceneLogic.ChessPiece
             this.OnInit();
         }
 
-        public virtual  void             OnInit() { }
+        public virtual void OnInit()
+        {
+        }
         public abstract List<Vector2Int> GetAvailableMoves(BaseChessPiece[,] chessboard);
         public abstract List<Vector2Int> GetCheckMovesIndex(Vector2Int currentPieceIndex, List<Vector2Int> availableMoves, Vector2Int kingPieceIndex);
 
@@ -71,7 +75,7 @@ namespace Runtime.PlaySceneLogic.ChessPiece
 
             this.boardController.MoveList.Add(new[]
                 { new Vector2Int(currentPieceIndex.x, currentPieceIndex.y), new Vector2Int(this.boardController.GetTileIndex(targetTile).x, this.boardController.GetTileIndex(targetTile).y) });
-            this.boardController.ChessMoveList.Add((team, type));
+            this.boardController.ChessMoveList.Add((this.team, this.type));
         }
 
         public virtual SpecialMoveType GetSpecialMoveType(BaseChessPiece currentPiece, ref List<Vector2Int> availableMoves, Vector2Int targetTileIndex) { return SpecialMoveType.None; }

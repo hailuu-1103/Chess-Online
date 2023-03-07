@@ -16,17 +16,17 @@ public class AudioManager : MonoBehaviour
         if(Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(this.gameObject);
         }
         else
         {
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
     }
 
     public void PlayMusic(string name)
     {
-        Sound s = Array.Find(musicSounds, x => x.name == name);
+        Sound s = Array.Find(this.musicSounds, x => x.name == name);
 
         if (s == null)
         {
@@ -34,14 +34,14 @@ public class AudioManager : MonoBehaviour
         }
         else
         {
-            musicSource.clip = s.clip;
-            musicSource.Play();
+            this.musicSource.clip = s.clip;
+            this.musicSource.Play();
         }
     }
 
     public void PlaySFX(string name)
     {
-        Sound s = Array.Find(sfxSounds, x => x.name == name);
+        Sound s = Array.Find(this.sfxSounds, x => x.name == name);
 
         if (s == null)
         {
@@ -49,7 +49,7 @@ public class AudioManager : MonoBehaviour
         }
         else
         {
-            sfxSource.PlayOneShot(s.clip);
+            this.sfxSource.PlayOneShot(s.clip);
         }
     }
 }
