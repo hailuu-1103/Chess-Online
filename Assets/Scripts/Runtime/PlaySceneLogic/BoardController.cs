@@ -47,7 +47,7 @@ namespace Runtime.PlaySceneLogic
         public        BoolReactiveProperty         isWhiteTurn              = new(true);
         public        List<Vector2Int[]>           MoveList                 = new();
         public        List<(PieceTeam, PieceType)> ChessMoveList            = new();
-        public static float                        timeTotal                = 30f;
+        public static float                        timeTotal                = 300f;
         public        FloatReactiveProperty        playerWhiteTimeRemaining = new(timeTotal);
         public        FloatReactiveProperty        playerBlackTimeRemaining = new(timeTotal);
 

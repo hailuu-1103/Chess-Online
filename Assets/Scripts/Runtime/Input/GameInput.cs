@@ -50,6 +50,7 @@ namespace Runtime.Input
             else
             {
                 this.boardController.playerBlackTimeRemaining.Value -= Time.deltaTime;
+                if (this.boardController.playerWhiteTimeRemaining.Value <= 0)
                 {
                     this.signalBus.Fire(new OutOfTimeSignal(false));
                 }
