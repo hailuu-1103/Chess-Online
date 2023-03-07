@@ -18,51 +18,51 @@ MonoBehaviour:
   m_GUID: 9b9ba9b31054544439d8a74d3c42c89d
   m_SerializeEntries:
   - m_GUID: 5bf33171a7890405fadd9ba6c341d086
-    m_Address: queen_black
+    m_Address: queen_Black
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 8dde74c05b5674a6b96e6c855da9dc82
-    m_Address: queen_white
+    m_Address: queen_White
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: ed72f49bf7af8450ea16c4af1a47f9fe
-    m_Address: bishop_black
+    m_Address: bishop_Black
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 5c87fe55678ba447eb605e8ee793c858
-    m_Address: bishop_white
+    m_Address: bishop_White
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 7ae06a498d47544d7a75ddfdf1ada9d4
-    m_Address: knight_black
+    m_Address: knight_Black
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: b6bd772b73a504ab5a27db2031715b95
-    m_Address: knight_white
+    m_Address: knight_White
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 382845e9ae7fd4bbcae87e795b1732d2
-    m_Address: pawn_black
+    m_Address: pawn_Black
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: c0503727f302a44a3b74e1083b31c080
-    m_Address: pawn_white
+    m_Address: pawn_White
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 92aee0fb85e2f4c2f9f3a34e83522ec3
-    m_Address: rook_black
+    m_Address: rook_Black
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 49084320a93464c4aac4806e7b02323d
-    m_Address: rook_white
+    m_Address: rook_White
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 29acc54505ef849ac925be76a10c6b3a
-    m_Address: king_black
+    m_Address: king_Black
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 1ea21c492ec9b4f778f6f0a9dfa0c532
-    m_Address: king_white
+    m_Address: king_White
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0

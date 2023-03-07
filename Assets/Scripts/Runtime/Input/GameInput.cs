@@ -11,10 +11,14 @@ namespace Runtime.Input
         #region inject
 
         private PlaySceneCamera playSceneCamera;
-        private SignalBus       signalBus;
+        private SignalBus signalBus;
         private BoardController boardController;
 
         #endregion
+
+        public TextMeshPro playerWhiteTimeText;
+        public TextMeshPro playerBlackTimeText;
+        public bool IsBlockInput = false;
 
         [Inject]
         private void OnInit(SignalBus signal, PlaySceneCamera playCamera, BoardController controller)
@@ -27,7 +31,7 @@ namespace Runtime.Input
         private void Update()
         {
             var ray = this.playSceneCamera.GetRayScreenPoint(Input.mousePosition);
-            if (Physics.Raycast(ray, out var hitInfo, 100, LayerMask.GetMask("Tile")))
+            if (Physics.Raycast(ray, out var hitInfo, 100, LayerMask.GetMask("Tile")) && !IsBlockInput)
             {
                 if (Input.GetMouseButtonDown(0))
                 {

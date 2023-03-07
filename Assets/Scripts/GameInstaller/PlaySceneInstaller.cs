@@ -2,6 +2,7 @@ namespace GameInstaller
 {
     using GameFoundation.Scripts.UIModule.ScreenFlow.Managers;
     using GameFoundation.Scripts.UIModule.Utilities;
+    using Runtime.Input;
     using Runtime.Input.Signal;
     using Runtime.PlaySceneLogic;
     using Runtime.PlaySceneLogic.ChessPiece;
@@ -27,6 +28,7 @@ namespace GameInstaller
             this.Container.Bind<PieceSpawnerService>().AsCached().NonLazy();
             this.Container.Bind<PieceRegularMoveHelper>().AsCached().NonLazy();
 
+            this.Container.Bind<GameInput>().FromComponentsInHierarchy().AsCached();
             this.Container.Bind<BoardController>().FromComponentInHierarchy().AsCached();
             this.Container.Rebind<ISpecialMoves>().To<CastlingMove>().AsSingle();
             this.Container.Rebind<ISpecialMoves>().To<EnPassantMove>().AsSingle();
