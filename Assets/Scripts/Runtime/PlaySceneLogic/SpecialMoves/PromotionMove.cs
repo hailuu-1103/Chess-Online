@@ -17,16 +17,17 @@ namespace Runtime.PlaySceneLogic.SpecialMoves
         private readonly BoardController     boardController;
         private readonly PieceSpawnerService pieceSpawnerService;
         private readonly ObjectPoolManager   objectPoolManager;
-        [Inject] private Transform           pieceHolder;
+        private          Transform           pieceHolder;
 
         #endregion
 
         private Vector2Int currentPieceIndex;
         private Vector2Int targetPieceIndex;
 
-        public PromotionMove(IScreenManager screenManager, BoardController boardController, PieceSpawnerService pieceSpawnerService)
+        public PromotionMove(IScreenManager screenManager, Transform pieceHolder, BoardController boardController, PieceSpawnerService pieceSpawnerService)
         {
             this.screenManager       = screenManager;
+            this.pieceHolder         = pieceHolder;
             this.boardController     = boardController;
             this.pieceSpawnerService = pieceSpawnerService;
         }
@@ -43,7 +44,8 @@ namespace Runtime.PlaySceneLogic.SpecialMoves
             if (targetPiece != null) targetPiece.Recycle();
             var currentTeam = this.boardController.GetPieceByIndex(this.currentPieceIndex).team;
             await this.screenManager.OpenScreen<PromotionPopUpPresenter, PromotionPopUpModel>(new PromotionPopUpModel(this.SpawnPromotionPiece, currentTeam));
-            this.boardController.MoveList.Add(new[]{
+            this.boardController.MoveList.Add(new[]
+            {
                 new Vector2Int(currentPieceIndex.x, currentPieceIndex.y),
                 new Vector2Int(targetPieceIndex.x, targetPieceIndex.y)
             });

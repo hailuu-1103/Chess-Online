@@ -11,10 +11,10 @@ public class PieceLog
 
     public PieceLog(string startPosition, string endPosition, string pieceType, string pieceTeam)
     {
-        StartPosition = startPosition;
-        EndPosition = endPosition;
-        PieceType = pieceType;
-        PieceTeam = pieceTeam;
+        this.StartPosition = startPosition;
+        this.EndPosition   = endPosition;
+        this.PieceType     = pieceType;
+        this.PieceTeam        = pieceTeam;
     }
 
     public PieceLog()

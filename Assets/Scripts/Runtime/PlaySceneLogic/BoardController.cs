@@ -34,11 +34,11 @@ namespace Runtime.PlaySceneLogic
         private SignalBus              signalBus;
         private IScreenManager         screenManager;
         private FileManager            fileManager;
+        private Transform              pieceHolder;
 
         #endregion
 
         [SerializeField] private Transform tileHolder;
-        [Inject]         private Transform pieceHolder;
 
         public GameObject[,]     RuntimeTiles  = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
         public BaseChessPiece[,] RuntimePieces = new BaseChessPiece[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
@@ -47,7 +47,7 @@ namespace Runtime.PlaySceneLogic
         public        BoolReactiveProperty         isWhiteTurn              = new(true);
         public        List<Vector2Int[]>           MoveList                 = new();
         public        List<(PieceTeam, PieceType)> ChessMoveList            = new();
-        public static float                        timeTotal                = 300f;
+        public static float                        timeTotal                = 30f;
         public        FloatReactiveProperty        playerWhiteTimeRemaining = new(timeTotal);
         public        FloatReactiveProperty        playerBlackTimeRemaining = new(timeTotal);
 
@@ -62,7 +62,7 @@ namespace Runtime.PlaySceneLogic
 
         [Inject]
         private void OnInit(ILogService logger, IScreenManager screen, PlaySceneCamera playCamera, TileSpawnerService tileSpawner, PieceSpawnerService pieceSpawner,
-            TileHighlighterService tileHighlighter, SignalBus signal, FileManager fileManager)
+            TileHighlighterService tileHighlighter, SignalBus signal, FileManager fileManager, Transform holder)
         {
             this.logService             = logger;
             this.tileSpawnerService     = tileSpawner;
@@ -72,14 +72,22 @@ namespace Runtime.PlaySceneLogic
             this.screenManager          = screen;
             this.playSceneCamera        = playCamera;
             this.fileManager            = fileManager;
+            this.pieceHolder            = holder;
             this.switchCamDispose       = this.isWhiteTurn.Subscribe(whiteTurn => { this.playSceneCamera.SetMainCamera(whiteTurn); });
         }
 
-        private void OnEnable() { this.signalBus.Subscribe<OnMouseEnterSignal>(this.MovePiece); }
+        private void OnEnable()
+        {
+            this.signalBus.Subscribe<OnMouseEnterSignal>(this.MovePiece);
+            this.signalBus.Subscribe<OutOfTimeSignal>(this.OnOutOfTime);
+        }
+
 
         private void OnDisable()
+        
         {
             this.signalBus.Unsubscribe<OnMouseEnterSignal>(this.MovePiece);
+            this.signalBus.Unsubscribe<OutOfTimeSignal>(this.OnOutOfTime);
             this.switchCamDispose?.Dispose();
         }
 
@@ -119,6 +127,14 @@ namespace Runtime.PlaySceneLogic
         {
             if (this.result == GameResultStatus.NotFinish)
                 this.fileManager.saveData(this.MoveList, this.ChessMoveList, this.RuntimePieces, this.playerWhiteTimeRemaining.Value, this.playerBlackTimeRemaining.Value);
+        }
+
+        private void OnOutOfTime(OutOfTimeSignal obj)
+        {
+            const string resultCause = "Out of time";
+            this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(obj.IsWhiteTime
+                ? new GameResultPopupModel(PieceTeam.White, GameResultStatus.Lose, resultCause)
+                : new GameResultPopupModel(PieceTeam.Black, GameResultStatus.Lose, resultCause));
         }
 
         private void MovePiece(OnMouseEnterSignal signal)
@@ -436,6 +452,24 @@ namespace Runtime.PlaySceneLogic
             return -Vector2Int.one;
         }
 
+        public void ResetData()
+        {
+            this.inTurnMoveCount = 0;
+            this.pieceAvailableMovesIndex.Clear();
+            this.previousTileIndex  = -Vector2Int.one;
+            this.currentlyTileIndex = -Vector2Int.one;
+            this.specialMoveType    = SpecialMoveType.None;
+            this.isWhiteTurn        = new BoolReactiveProperty(true);
+            this.chessId            = "";
+            this.MoveList.Clear();
+            this.ChessMoveList.Clear();
+            this.RuntimePieces            = new BaseChessPiece[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
+            this.RuntimeTiles             = new GameObject[GameStaticValue.BoardRows, GameStaticValue.BoardColumn];
+            this.playerWhiteTimeRemaining = new(timeTotal);
+            this.playerBlackTimeRemaining = new(timeTotal);
+            this.switchCamDispose?.Dispose();;
+        }
+        
         #endregion
     }
 }

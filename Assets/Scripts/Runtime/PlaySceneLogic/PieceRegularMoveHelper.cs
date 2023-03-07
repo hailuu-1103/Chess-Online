@@ -101,6 +101,11 @@ namespace Runtime.PlaySceneLogic
                 if (row - i < 0 || col - i < 0) continue;
                 var botLeftDiagonalPiece = runtimePieces[row - i, col - i];
                 if (botLeftDiagonalPiece != null && botLeftDiagonalPiece.team == runtimePieces[row, col].team) break;
+                if (botLeftDiagonalPiece != null && botLeftDiagonalPiece.team != runtimePieces[row, col].team)
+                {
+                    availableMoves.Add(new Vector2Int(row - i, col - i));
+                    break;
+                }
                 availableMoves.Add(new Vector2Int(row - i, col - i));
             }
         }
@@ -111,6 +116,11 @@ namespace Runtime.PlaySceneLogic
                 if (row + i > 7 || col - i < 0) continue;
                 var botRightDiagonalPiece = runtimePieces[row + i, col - i];
                 if (botRightDiagonalPiece != null && botRightDiagonalPiece.team == runtimePieces[row, col].team) break;
+                if (botRightDiagonalPiece != null && botRightDiagonalPiece.team != runtimePieces[row, col].team)
+                {
+                    availableMoves.Add(new Vector2Int(row + i, col - i));
+                    break;
+                }
                 availableMoves.Add(new Vector2Int(row + i, col - i));
             }
         }
@@ -121,6 +131,11 @@ namespace Runtime.PlaySceneLogic
                 if (row - i < 0 || col + i > 7) continue;
                 var topLeftDiagonalPiece = runtimePieces[row - i, col + i];
                 if (topLeftDiagonalPiece != null && topLeftDiagonalPiece.team == runtimePieces[row, col].team) break;
+                if (topLeftDiagonalPiece != null && topLeftDiagonalPiece.team != runtimePieces[row, col].team)
+                {
+                    availableMoves.Add(new Vector2Int(row - i, col + i));
+                    break;
+                }
                 availableMoves.Add(new Vector2Int(row - i, col + i));
             }
         }
@@ -131,6 +146,11 @@ namespace Runtime.PlaySceneLogic
                 if (row + i > 7 || col + i > 7) continue;
                 var topRightDiagonalPiece = runtimePieces[row + i, col + i];
                 if (topRightDiagonalPiece != null && topRightDiagonalPiece.team == runtimePieces[row, col].team) break;
+                if (topRightDiagonalPiece != null && topRightDiagonalPiece.team != runtimePieces[row, col].team)
+                {
+                    availableMoves.Add(new Vector2Int(row + i, col + i));
+                    break;
+                }
                 availableMoves.Add(new Vector2Int(row + i, col + i));
             }
         }
@@ -141,6 +161,11 @@ namespace Runtime.PlaySceneLogic
                 if (row + i > 7) continue;
                 var topColumnPiece = runtimePieces[row + i, col];
                 if (topColumnPiece != null && topColumnPiece.team == runtimePieces[row, col].team) break;
+                if (topColumnPiece != null && topColumnPiece.team != runtimePieces[row, col].team)
+                {
+                    availableMoves.Add(new Vector2Int(row + i, col));
+                    break;
+                }
                 availableMoves.Add(new Vector2Int(row + i, col));
             }
         }
@@ -151,6 +176,11 @@ namespace Runtime.PlaySceneLogic
                 if (row - i < 0) continue;
                 var topColumnPiece = runtimePieces[row - i, col];
                 if (topColumnPiece != null && topColumnPiece.team == runtimePieces[row, col].team) break;
+                if (topColumnPiece != null && topColumnPiece.team != runtimePieces[row, col].team)
+                {
+                    availableMoves.Add(new Vector2Int(row - i, col));
+                    break;
+                }
                 availableMoves.Add(new Vector2Int(row - i, col));
             }
         }
@@ -161,6 +191,11 @@ namespace Runtime.PlaySceneLogic
                 if (col - i < 0) continue;
                 var topColumnPiece = runtimePieces[row, col - i];
                 if (topColumnPiece != null && topColumnPiece.team == runtimePieces[row, col].team) break;
+                if (topColumnPiece != null && topColumnPiece.team != runtimePieces[row, col].team)
+                {
+                    availableMoves.Add(new Vector2Int(row, col - i));
+                    break;
+                }
                 availableMoves.Add(new Vector2Int(row, col - i));
             }
         }
@@ -171,6 +206,11 @@ namespace Runtime.PlaySceneLogic
                 if (col + i > 7) continue;
                 var topColumnPiece = runtimePieces[row, col + i];
                 if (topColumnPiece != null && topColumnPiece.team == runtimePieces[row, col].team) break;
+                if (topColumnPiece != null && topColumnPiece.team != runtimePieces[row, col].team)
+                {
+                    availableMoves.Add(new Vector2Int(row, col + i));
+                    break;
+                }
                 availableMoves.Add(new Vector2Int(row, col + i));
             }
         }

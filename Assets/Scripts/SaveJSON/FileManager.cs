@@ -30,7 +30,7 @@ public class FileManager : MonoBehaviour
 
     public void saveMoveList(List<Vector2Int[]> MoveList, List<(PieceTeam, PieceType)> ChessMoveList)
     {
-        var moveLogSource = saveFolder + FILE_KEY + ".log.json";
+        var moveLogSource = this.saveFolder + this.FILE_KEY + ".log.json";
 
         var moveInfoList = new List<PieceLog>();
         for (int i = 0; i < MoveList.Count; i++)
@@ -61,7 +61,7 @@ public class FileManager : MonoBehaviour
 
     public void saveLastBoard(BaseChessPiece[,] RuntimePieces)
     {
-        var lastBoardSource = saveFolder + FILE_KEY + ".last.json";
+        var lastBoardSource = this.saveFolder + this.FILE_KEY + ".last.json";
 
         var listCurrentPiece = RuntimePieces;
 
@@ -90,9 +90,8 @@ public class FileManager : MonoBehaviour
 
     private void saveGameIds(GameResultStatus status, PieceTeam team, float playerWhiteTimeRemaining, float playerBlackTimeRemaining)
     {
-        GameLogs.Add(
-            new GameLog(
-                FILE_KEY, 
+        this.GameLogs.Add(
+            new GameLog(this.FILE_KEY, 
                 DateTime.Now,
                 status,
                 team,
@@ -100,21 +99,21 @@ public class FileManager : MonoBehaviour
                 playerBlackTimeRemaining
                 )
             );
-        JsonUtil.Save(GameLogs, saveFolder + "game.json");
+        JsonUtil.Save(this.GameLogs, this.saveFolder + "game.json");
     }
 
     public void saveData(List<Vector2Int[]> MoveList, List<(PieceTeam, PieceType)> ChessMoveList, BaseChessPiece[,] RuntimePieces, 
         float playerWhiteTimeRemaining, float playerBlackTimeRemaining, GameResultStatus status = GameResultStatus.NotFinish, PieceTeam team = PieceTeam.None)
     {
 
-        if (!Directory.Exists(saveFolder))
+        if (!Directory.Exists(this.saveFolder))
         {
-            Directory.CreateDirectory(saveFolder);
+            Directory.CreateDirectory(this.saveFolder);
         }
 
-        saveMoveList(MoveList, ChessMoveList);
-        saveLastBoard(RuntimePieces);
-        saveGameIds(
+        this.saveMoveList(MoveList, ChessMoveList);
+        this.saveLastBoard(RuntimePieces);
+        this.saveGameIds(
             status,
             team, 
             playerWhiteTimeRemaining,
@@ -124,22 +123,22 @@ public class FileManager : MonoBehaviour
 
     public GameLog getGameLog(string gameId)
     {
-        return GameLogs.LastOrDefault(g => g.Id == gameId);
+        return this.GameLogs.LastOrDefault(g => g.Id == gameId);
     }
 
     public List<PieceLog> getLastChessBoardById(string gameId){
-        var game = GameLogs.LastOrDefault(g => g.Id == gameId);
+        var game = this.GameLogs.LastOrDefault(g => g.Id == gameId);
         if(game != null){
-            return JsonUtil.Load<List<PieceLog>>(saveFolder + gameId + ".last.json");
+            return JsonUtil.Load<List<PieceLog>>(this.saveFolder + gameId + ".last.json");
         }
         return null;
     }
 
     public List<PieceLog> getPieceLogById(string gameId){
-        var game = GameLogs.LastOrDefault(g => g.Id == gameId);
+        var game = this.GameLogs.LastOrDefault(g => g.Id == gameId);
         if(game != null)
         {
-            return JsonUtil.Load<List<PieceLog>>(saveFolder + gameId + ".log.json");
+            return JsonUtil.Load<List<PieceLog>>(this.saveFolder + gameId + ".log.json");
         }
         return null;
     }
@@ -169,20 +168,19 @@ public class FileManager : MonoBehaviour
 
     public void SetFileKey(string key)
     {
-        FILE_KEY = key;
+        this.FILE_KEY = key;
     }
 
     private void Start()
     {
-        saveFolder = Application.dataPath + "/Resources/SaveData/";
-        GameLogs = JsonUtil.Load<List<GameLog>>(saveFolder + "game.json");
-        Debug.Log(GameLogs.Count);
-        var find = GameLogs.FirstOrDefault(x => x.Id == FILE_KEY);
+        this.saveFolder = Application.dataPath + "/Resources/SaveData/";
+        this.GameLogs      = JsonUtil.Load<List<GameLog>>(this.saveFolder + "game.json");
+        var find = this.GameLogs.FirstOrDefault(x => x.Id == this.FILE_KEY);
         while (find != null)
         {
-            FILE_KEY = GenerateRandomString();
-            find = GameLogs.FirstOrDefault(x => x.Id == FILE_KEY);
+            this.FILE_KEY = GenerateRandomString();
+            find          = this.GameLogs.FirstOrDefault(x => x.Id == this.FILE_KEY);
         }
-        Debug.Log(FILE_KEY);
+        Debug.Log(this.FILE_KEY);
     }
 }

@@ -42,10 +42,17 @@ namespace Runtime.Input
             if (this.boardController.isWhiteTurn.Value)
             {
                 this.boardController.playerWhiteTimeRemaining.Value -= Time.deltaTime;
+                if (this.boardController.playerWhiteTimeRemaining.Value <= 0)
+                {
+                    this.signalBus.Fire(new OutOfTimeSignal(true));
+                }
             }
             else
             {
                 this.boardController.playerBlackTimeRemaining.Value -= Time.deltaTime;
+                {
+                    this.signalBus.Fire(new OutOfTimeSignal(false));
+                }
             }
         }
     }
