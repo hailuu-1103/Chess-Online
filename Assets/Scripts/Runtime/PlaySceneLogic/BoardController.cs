@@ -93,36 +93,8 @@ namespace Runtime.PlaySceneLogic
 
         private async void Start()
         {
-            this.RuntimeTiles = await this.tileSpawnerService.GenerateAllTiles(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.tileHolder);
-            if (this.chessId == "")
-            {
-                this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder);
-            }
-            else
-            {
-                var game = this.fileManager.getGameLog(this.chessId);
-
-                var listChess = this.fileManager.getLastChessBoardById(this.chessId);
-                this.fileManager.SetFileKey(this.chessId);
-                this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder, listChess);
-                var pieceLogs = this.fileManager.getPieceLogById(this.chessId);
-                (this.MoveList, this.ChessMoveList) = this.fileManager.ConvertPieceLog(pieceLogs);
-
-                if (game.Status == GameResultStatus.NotFinish)
-                {
-                    var lastMove = pieceLogs.Last();
-                    this.isWhiteTurn              = new(lastMove.PieceTeam != "White");
-                    this.switchCamDispose         = this.isWhiteTurn.Subscribe(whiteTurn => this.playSceneCamera.SetMainCamera(whiteTurn));
-                    this.playerWhiteTimeRemaining = game.PlayerWhiteTimeRemaining;
-                    this.playerBlackTimeRemaining = game.PlayerBlackTimeRemaining;
-                }
-                else
-                {
-                    // TO DO: Case load game finish
-                }
-            }
+            
         }
-
         private void OnApplicationQuit()
         {
             if (this.result == GameResultStatus.NotFinish)
@@ -278,7 +250,38 @@ namespace Runtime.PlaySceneLogic
         }
 
         #region ultility
+        public async void StartNewGame() 
+        {
+            this.ResetData();
+            this.RuntimeTiles = await this.tileSpawnerService.GenerateAllTiles(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.tileHolder);
+            if (this.chessId == "")
+            {
+                this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder);
+            }
+            else
+            {
+                var game = this.fileManager.getGameLog(this.chessId);
 
+                var listChess = this.fileManager.getLastChessBoardById(this.chessId);
+                this.fileManager.SetFileKey(this.chessId);
+                this.RuntimePieces = await this.pieceSpawnerService.SpawnAllPieces(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.pieceHolder, listChess);
+                var pieceLogs = this.fileManager.getPieceLogById(this.chessId);
+                (this.MoveList, this.ChessMoveList) = this.fileManager.ConvertPieceLog(pieceLogs);
+
+                if (game.Status == GameResultStatus.NotFinish)
+                {
+                    var lastMove = pieceLogs.Last();
+                    this.isWhiteTurn = new(lastMove.PieceTeam != "White");
+                    this.switchCamDispose = this.isWhiteTurn.Subscribe(whiteTurn => this.playSceneCamera.SetMainCamera(whiteTurn));
+                    this.playerWhiteTimeRemaining = game.PlayerWhiteTimeRemaining;
+                    this.playerBlackTimeRemaining = game.PlayerBlackTimeRemaining;
+                }
+                else
+                {
+                    // TO DO: Case load game finish
+                }
+            }
+        }
         public bool DetectCheck(PieceTeam opponentTeam)
         {
             var targetKingIndex    = this.GetPieceIndex(opponentTeam, PieceType.King);

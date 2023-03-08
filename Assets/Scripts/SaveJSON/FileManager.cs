@@ -121,6 +121,11 @@ public class FileManager : MonoBehaviour
             );
     }
 
+    public GameLog getLastGame()
+    {
+        return this.GameLogs.LastOrDefault();
+    }
+
     public GameLog getGameLog(string gameId)
     {
         return this.GameLogs.LastOrDefault(g => g.Id == gameId);

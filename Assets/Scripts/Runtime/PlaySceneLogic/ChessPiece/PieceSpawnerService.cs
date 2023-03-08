@@ -12,8 +12,8 @@ namespace Runtime.PlaySceneLogic.ChessPiece
     public class PieceSpawnerService
     {
         private readonly IGameAssets       gameAssets;
-        private readonly ObjectPoolManager objectPoolManager;
-        private readonly DiContainer       diContainer;
+        private ObjectPoolManager objectPoolManager;
+        private DiContainer       diContainer;
 
         public PieceSpawnerService(IGameAssets gameAssets, ObjectPoolManager objectPoolManager, DiContainer diContainer)
         {
