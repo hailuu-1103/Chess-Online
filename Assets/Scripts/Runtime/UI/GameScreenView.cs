@@ -18,12 +18,15 @@ namespace Runtime.UI
         [SerializeField] private TextMeshProUGUI    txtBlackTime;
         [SerializeField] private Button             startButton;
         [SerializeField] private Button             continueButton;
+        [SerializeField] private GameObject panelStart;
 
         public TextMeshProUGUI TxtTeamTurn  => this.txtTeamTurn;
         public TextMeshProUGUI TxtWhiteTime => this.txtWhiteTime;
         public TextMeshProUGUI TxtBlackTime => this.txtBlackTime;
         public Button StartButton => this.startButton;
         public Button ContinueButton => this.continueButton;
+        public GameObject PanelStart => this.panelStart;
+
     }
 
     [ScreenInfo(nameof(GameScreenView))]
@@ -69,7 +72,9 @@ namespace Runtime.UI
 
         public void StartNewGame()
         {
+            this.boardController.isPlaying = true;
             this.boardController.StartNewGame();
+            this.View.PanelStart.SetActive(false);
         }
 
         public void ContinuePlay()
@@ -83,6 +88,9 @@ namespace Runtime.UI
             {
                 this.boardController.chessId = "";
             }
+            this.boardController.isPlaying = true;
+            this.boardController.StartNewGame();
+            this.View.PanelStart.SetActive(false);
         }
     }
 }

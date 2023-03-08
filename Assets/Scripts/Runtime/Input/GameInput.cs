@@ -39,22 +39,26 @@ namespace Runtime.Input
                 }
             }
 
-            if (this.boardController.isWhiteTurn.Value)
+            if (this.boardController.isPlaying)
             {
-                this.boardController.playerWhiteTimeRemaining.Value -= Time.deltaTime;
-                if (this.boardController.playerWhiteTimeRemaining.Value <= 0)
+                if (this.boardController.isWhiteTurn.Value)
                 {
-                    this.signalBus.Fire(new OutOfTimeSignal(true));
+                    this.boardController.playerWhiteTimeRemaining.Value -= Time.deltaTime;
+                    if (this.boardController.playerWhiteTimeRemaining.Value <= 0)
+                    {
+                        this.signalBus.Fire(new OutOfTimeSignal(true));
+                    }
+                }
+                else
+                {
+                    this.boardController.playerBlackTimeRemaining.Value -= Time.deltaTime;
+                    if (this.boardController.playerWhiteTimeRemaining.Value <= 0)
+                    {
+                        this.signalBus.Fire(new OutOfTimeSignal(false));
+                    }
                 }
             }
-            else
-            {
-                this.boardController.playerBlackTimeRemaining.Value -= Time.deltaTime;
-                if (this.boardController.playerWhiteTimeRemaining.Value <= 0)
-                {
-                    this.signalBus.Fire(new OutOfTimeSignal(false));
-                }
-            }
+
         }
     }
 }

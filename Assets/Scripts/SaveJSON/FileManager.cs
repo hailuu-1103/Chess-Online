@@ -54,8 +54,6 @@ public class FileManager : MonoBehaviour
              
             moveInfoList.Add(moveInfo);
         }
-
-        Debug.Log(moveLogSource);
         JsonUtil.Save(moveInfoList, moveLogSource);
     }
 
@@ -83,22 +81,19 @@ public class FileManager : MonoBehaviour
                 }
             }
         }
-
-        Debug.Log(lastBoardSource);
         JsonUtil.Save(pieceLogs, lastBoardSource);
     }
 
     private void saveGameIds(GameResultStatus status, PieceTeam team, float playerWhiteTimeRemaining, float playerBlackTimeRemaining)
     {
-        this.GameLogs.Add(
-            new GameLog(this.FILE_KEY, 
+        var log = new GameLog(this.FILE_KEY,
                 DateTime.Now,
                 status,
                 team,
                 playerWhiteTimeRemaining,
                 playerBlackTimeRemaining
-                )
-            );
+                );
+        this.GameLogs.Add(log);
         JsonUtil.Save(this.GameLogs, this.saveFolder + "game.json");
     }
 
@@ -110,7 +105,7 @@ public class FileManager : MonoBehaviour
         {
             Directory.CreateDirectory(this.saveFolder);
         }
-
+        Debug.Log(this.FILE_KEY);
         this.saveMoveList(MoveList, ChessMoveList);
         this.saveLastBoard(RuntimePieces);
         this.saveGameIds(
@@ -180,12 +175,15 @@ public class FileManager : MonoBehaviour
     {
         this.saveFolder = Application.dataPath + "/Resources/SaveData/";
         this.GameLogs      = JsonUtil.Load<List<GameLog>>(this.saveFolder + "game.json");
+        if (this.GameLogs == null)
+        {
+            this.GameLogs = new List<GameLog>();
+        }
         var find = this.GameLogs.FirstOrDefault(x => x.Id == this.FILE_KEY);
         while (find != null)
         {
             this.FILE_KEY = GenerateRandomString();
             find          = this.GameLogs.FirstOrDefault(x => x.Id == this.FILE_KEY);
         }
-        Debug.Log(this.FILE_KEY);
     }
 }

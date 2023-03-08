@@ -48,6 +48,7 @@ namespace Runtime.PlaySceneLogic
         public        List<Vector2Int[]>           MoveList                 = new();
         public        List<(PieceTeam, PieceType)> ChessMoveList            = new();
         public static float                        timeTotal                = 300f;
+        public bool isPlaying = false;
         public        FloatReactiveProperty        playerWhiteTimeRemaining = new(timeTotal);
         public        FloatReactiveProperty        playerBlackTimeRemaining = new(timeTotal);
 
@@ -93,7 +94,6 @@ namespace Runtime.PlaySceneLogic
 
         private async void Start()
         {
-            
         }
         private void OnApplicationQuit()
         {
@@ -160,6 +160,7 @@ namespace Runtime.PlaySceneLogic
                         this.winTeam = currentPiece.team;
                         this.result  = GameResultStatus.Win;
                         this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(this.winTeam, this.result, "Checkmate!"));
+                        isPlaying = false;
                         this.fileManager.saveData(this.MoveList, this.ChessMoveList, this.RuntimePieces, this.playerWhiteTimeRemaining.Value, this.playerBlackTimeRemaining.Value, this.result, this.winTeam);
                     }
 
@@ -169,6 +170,7 @@ namespace Runtime.PlaySceneLogic
                         this.winTeam = currentPiece.team;
                         this.result  = GameResultStatus.Draw;
                         this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(this.winTeam, this.result, drawCause));
+                        isPlaying = false;
                         this.fileManager.saveData(this.MoveList, this.ChessMoveList, this.RuntimePieces, this.playerWhiteTimeRemaining.Value, this.playerBlackTimeRemaining.Value, this.result, this.winTeam);
                     }
 
@@ -252,7 +254,7 @@ namespace Runtime.PlaySceneLogic
         #region ultility
         public async void StartNewGame() 
         {
-            this.ResetData();
+            //this.ResetData();
             this.RuntimeTiles = await this.tileSpawnerService.GenerateAllTiles(GameStaticValue.BoardRows, GameStaticValue.BoardColumn, this.tileHolder);
             if (this.chessId == "")
             {
@@ -273,12 +275,14 @@ namespace Runtime.PlaySceneLogic
                     var lastMove = pieceLogs.Last();
                     this.isWhiteTurn = new(lastMove.PieceTeam != "White");
                     this.switchCamDispose = this.isWhiteTurn.Subscribe(whiteTurn => this.playSceneCamera.SetMainCamera(whiteTurn));
-                    this.playerWhiteTimeRemaining = game.PlayerWhiteTimeRemaining;
-                    this.playerBlackTimeRemaining = game.PlayerBlackTimeRemaining;
+                    this.playerWhiteTimeRemaining.Value = game.PlayerWhiteTimeRemaining + 1000;
+                    this.playerBlackTimeRemaining.Value = game.PlayerBlackTimeRemaining + 1000;
                 }
                 else
                 {
                     // TO DO: Case load game finish
+                    isPlaying = false;
+                    await this.screenManager.OpenScreen<GameResultPopupPresenter, GameResultPopupModel>(new GameResultPopupModel(game.winTeam, game.Status, "This Game was ended!!"));
                 }
             }
         }

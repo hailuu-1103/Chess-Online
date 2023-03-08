@@ -11,8 +11,10 @@
         public DateTime              Time;
         public GameResultStatus      Status;
         public PieceTeam             winTeam;
-        public FloatReactiveProperty PlayerWhiteTimeRemaining;
-        public FloatReactiveProperty PlayerBlackTimeRemaining;
+        public float                 PlayerWhiteTimeRemaining;
+        public float                 PlayerBlackTimeRemaining;
+
+        public GameLog() { }
 
         public GameLog(string id, DateTime time, GameResultStatus status, PieceTeam winTeam)
         {
@@ -24,8 +26,8 @@
 
         public GameLog(string id, DateTime time, GameResultStatus status, PieceTeam winTeam, float playerWhiteTimeRemaining, float playerBlackTimeRemaining) : this(id, time, status, winTeam)
         {
-            this.PlayerWhiteTimeRemaining.Value = playerWhiteTimeRemaining;
-            this.PlayerBlackTimeRemaining.Value = playerBlackTimeRemaining;
+            this.PlayerWhiteTimeRemaining = playerWhiteTimeRemaining;
+            this.PlayerBlackTimeRemaining = playerBlackTimeRemaining;
         }
     }
 }
